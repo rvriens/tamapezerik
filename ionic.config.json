@@ -1,0 +1,7 @@
+{
+  "name": "tamapezerik",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
