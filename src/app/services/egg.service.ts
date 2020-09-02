@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
+import { AngularFireFunctions } from '@angular/fire/functions';
+import { AngularFireDatabase} from '@angular/fire/database';
 
 @Injectable({
   providedIn: 'root'
@@ -7,14 +9,26 @@ import { AuthService } from './auth.service';
 export class EggService {
 
   constructor(
-    // private db: AngularFireDatabase,
-    // private fns: AngularFireFunctions,
+    private db: AngularFireDatabase,
+    private fns: AngularFireFunctions,
     private auth: AuthService) { }
 
   async openEgg(): Promise<void> {
+    const openEgg = this.fns.httpsCallable('openEgg');
+    const result = await openEgg({}).toPromise();
+    console.log('openegg result', result);
+    if (result) {
+      //
+    }
   }
 
   async closeOpening(): Promise<void> {
+    const closeOpening = this.fns.httpsCallable('closeOpening');
+    const result = await closeOpening({}).toPromise();
+    console.log('close Opening', result);
+    if (result) {
+      //
+    }
   }
 
 }

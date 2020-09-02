@@ -7,7 +7,11 @@ const routes: Routes = [
   {
     path: '',
     component: LoginPage
-  }
+  },
+  {
+    path: ':method',
+    component: LoginPage
+  },
 ];
 
 @NgModule({

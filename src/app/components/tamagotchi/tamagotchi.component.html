@@ -1,2 +1,7 @@
 
-<app-egg *ngIf="eggStatus == EggStadia.New" (openEgg)="openEgg($event)"></app-egg>
+<app-egg *ngIf="(eggStatus | async) == EggStadia.New" (openEgg)="openEgg($event)"></app-egg>
+<app-intro *ngIf="(eggStatus | async) == EggStadia.Opening"></app-intro>
+<app-character *ngIf="(eggStatus | async) == EggStadia.Alive"></app-character>
+<h1>
+{{eggStatus | async}}
+</h1>

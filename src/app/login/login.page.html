@@ -1,9 +1,125 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>login</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button [routerLink]="['/home']" color="primary">
+        <ion-icon slot="icon-only" md="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">
+      Inloggen
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true">
+  <div id="container">
 
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">Login</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-card *ngIf="!method">
+      <ion-card-header>
+        <ion-card-subtitle>Kies methode</ion-card-subtitle>
+        <ion-card-title>Inlogmethode</ion-card-title>
+      </ion-card-header>
+    
+      <ion-card-content>
+        <p>
+          Voor het spelen van dit spel is het vereist om in te loggen.<br>
+        </p> 
+        <br>
+        <p>
+          Kies hieronder een inlog methode.<br>
+          Door in te loggen zijn spel-gegevens uitwisselbaar tussen apparaten.<br>
+        </p>
+
+        <!--
+          <ion-button (click)="tryLoginGoogle()">Google
+          <ion-icon name="logo-google" slot="end"></ion-icon>
+        </ion-button>
+
+        <ion-button (click)="tryLoginFacebook()">Facebook
+          <ion-icon name="logo-facebook" slot="end"></ion-icon>
+        </ion-button>
+        -->
+        <ion-button [routerLink]="['phone']">Telefoon
+          <ion-icon name="call-outline" slot="end"></ion-icon>
+        </ion-button>
+        <!--
+        <ion-button [routerLink]="['email']">E-mail
+          <ion-icon name="mail-outline" slot="end"></ion-icon>
+        </ion-button>
+      -->
+        <br>
+        <p>
+          <i>
+            Gegevens worden niet gebruikt voor andere doeleinden dan hier boven beschreven.<br>
+            De gegevens worden ook niet uitgewisseld met derde.
+          </i>
+        </p>
+
+      </ion-card-content>
+    </ion-card>
+    
+
+    <ng-container *ngIf="method == 'phone'">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Voer telefoon nummer in</ion-card-subtitle>
+          <ion-card-title>Inloggen</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+          
+          <ion-input #phonenr type="tel" placeholder="Telefoonnummer"></ion-input>
+          <ion-button (click)="enterTel(phonenr.value)">Login</ion-button>
+          
+        </ion-card-content>
+      </ion-card>
+      
+      
+      <ion-card class="card-center">
+        <ion-card-content class="ion-text-center">
+          <div #recaptchacontainer></div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+
+      <!--
+        <ion-card *ngIf="method == 'email'">
+        <ion-card-header>
+          <ion-card-subtitle>Voer e-mail in</ion-card-subtitle>
+          <ion-card-title>Inloggen</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+          
+          <ion-input #email type="email" placeholder="e-mail"></ion-input>
+          <ion-button (click)="enterEmail(email.value)">Stuur inlog link</ion-button>
+          
+        </ion-card-content>
+      </ion-card>
+  
+      <ion-card *ngIf="method == 'emailsend'">
+        <ion-card-header>
+          <ion-card-subtitle>e-mail verzonden</ion-card-subtitle>
+          <ion-card-title>Inloggen</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+          <p>
+            Email verzonden.
+          </p>
+        </ion-card-content>
+      </ion-card>
+    -->
+
+  </div>
 </ion-content>

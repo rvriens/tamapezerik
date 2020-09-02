@@ -3,12 +3,30 @@ import { CommonModule } from '@angular/common';
 import { EggstatusService } from './eggstatus.service';
 import { AuthService } from './auth.service';
 import { EggService } from './egg.service';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAnalyticsModule } from '@angular/fire/analytics';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireFunctionsModule} from '@angular/fire/functions';
+import { CharacterService } from './character.service';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    AngularFireModule,
+    AngularFireAuthModule,
+    AngularFireFunctionsModule,
+    AngularFireStorageModule,
+    AngularFireDatabaseModule,
   ],
-  providers: [EggstatusService, EggService, AuthService],
+  providers: [
+    EggstatusService,
+    EggService,
+    AuthService,
+    CharacterService
+  ],
   declarations: []
 })
 export class ServicesModule { }

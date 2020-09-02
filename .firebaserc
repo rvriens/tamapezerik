@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "tamapezerik": {
+      "hosting": {
+        "app": [
+          "tamapezerik"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "tamapezerik"
+  }
+}
