@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Statistieken</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+<p>
+  <ion-icon name="water-outline" size="large"></ion-icon>
+  <ion-progress-bar [color]="getColor(hydration)" [value]="hydration"></ion-progress-bar>
+</p>
+<p>
+<ion-icon name="pizza-outline" size="large"></ion-icon>
+<ion-progress-bar [color]="getColor(food)" [value]="food"></ion-progress-bar>
+</p>
+
+<p>
+<ion-icon name="pulse-outline" size="large"></ion-icon>
+<ion-progress-bar [color]="getColor(health)" [value]="health"></ion-progress-bar>
+</p>
+<p>
+<ion-icon name="heart-outline" size="large"></ion-icon>
+<ion-progress-bar [color]="getColor(love)" [value]="love"></ion-progress-bar>
+</p>
+<p>
+  <ion-icon name="rose-outline" size="large"></ion-icon>
+<ion-progress-bar [color]="getColor(pezerik)" [value]="pezerik"></ion-progress-bar>
+</p>
+
+</ion-content>
+

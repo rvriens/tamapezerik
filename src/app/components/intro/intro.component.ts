@@ -11,6 +11,11 @@ import { EggService } from 'src/app/services/egg.service';
 export class IntroComponent implements OnInit {
 
   public initialText: string;
+  public tipText: string;
+  slideOpts = {
+    initialSlide: 0,
+    speed: 400
+  };
 
   constructor(
       private characterService: CharacterService,
@@ -19,9 +24,12 @@ export class IntroComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    this.characterService.getCharacter().pipe(map( (c) => c.initial)).subscribe( i => {
-      this.initialText = i + 'hallo';
+    this.characterService.getCharacter().subscribe( c => {
+      if (c) {
+      this.initialText = `${c.initial}`;
+      this.tipText = `${c.tip}`;
       setTimeout(() => this.detector.detectChanges(), 10);
+      }
     });
   }
 

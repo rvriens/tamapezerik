@@ -11,6 +11,7 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireFunctionsModule} from '@angular/fire/functions';
 import { CharacterService } from './character.service';
+import { ItemService } from './item.service';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { CharacterService } from './character.service';
     EggstatusService,
     EggService,
     AuthService,
-    CharacterService
+    CharacterService,
+    ItemService
   ],
   declarations: []
 })

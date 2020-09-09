@@ -1,24 +1,35 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { Character } from '../../../functions/src/models/character.model';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { AuthService } from './auth.service';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
-  character: Subject<Character> = new Subject<Character>();
+  character: BehaviorSubject<Character> = new BehaviorSubject<Character>(null);
 
   private initWatcher: Promise<void>;
 
   constructor(private db: AngularFireDatabase,
+              private fns: AngularFireFunctions,
               private auth: AuthService) {
     this.initWatcher = this.initStatusWatcher();
   }
 
   getCharacter(): Subject<Character> {
     return this.character;
+  }
+
+  async giveItem(item: string): Promise<void> {
+    const giveItem = this.fns.httpsCallable('giveItem');
+    const result = await giveItem({item}).toPromise();
+    console.log('openegg result', result);
+    if (result) {
+      //
+    }
   }
 
   private async initStatusWatcher() {

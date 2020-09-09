@@ -1,6 +1,16 @@
-<p>
-  {{initialText}}
-</p>
+<ion-slides pager="true" [options]="slideOpts">
+  <ion-slide>
+    <ion-text color="primary">
+      <h2>{{initialText}}</h2>
+    </ion-text>
+  </ion-slide>
+  <ion-slide>
+    <ion-text color="secondary">
+      <h2>{{tipText}}</h2>
+    </ion-text>
+  </ion-slide>
+</ion-slides>
 
+  
 
-<ion-button (click)="closeOpening($event)">close</ion-button>
+<ion-button (click)="closeOpening($event)">verder</ion-button>

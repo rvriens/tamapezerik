@@ -52,7 +52,7 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   }
 
   const x: Character = (await admin.database().ref(`/users/${context.auth.uid}/character`).once('value')).val();
-  if (x && x.status !== CharacterStatus.Dead) {
+  if (x && x.status !== CharacterStatus.DeadConfirmed) {
       return false;
   }
 
@@ -97,7 +97,42 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   return true;
 });
 
+exports.giveItem = functions.https.onCall(async (data, context) => {
 
+    const item = data.item;
+//       const key = data.key;
+//       const value = data.value;
+
+  // Checking that the user is authenticated.
+  if (!context.auth) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+        'while authenticated.');
+  }
+
+  const cs: CharacterStatus = (await admin.database().ref(`/users/${context.auth.uid}/character/status`).once('value')).val();
+  if (cs !== CharacterStatus.Alive) {
+      return false;
+  }
+
+  const stats: any = (await admin.database().ref(`/users/${context.auth.uid}/character/stats`).once('value')).val();
+
+  const itemdoc = await admin.firestore().collection('items').doc(item).get();
+  if (itemdoc.data()) {
+    const itemData = itemdoc.data();
+    if (itemData) {
+      Object.keys(itemData.stats).forEach(
+        key => {
+          stats[key] += itemData.stats[key];
+        }
+      );
+    }
+  }
+
+  await admin.database().ref(`/users/${context.auth.uid}/character/stats`).set(stats);
+
+  return true;
+});
 
 exports.closeOpening = functions.https.onCall(async (data, context) => {
 
@@ -113,10 +148,25 @@ exports.closeOpening = functions.https.onCall(async (data, context) => {
       return false;
   }
 
-  await admin.database().ref(`/users/${context.auth.uid}/character/staus`).set(CharacterStatus.Alive);
+  await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.Alive);
 
   return true;
 });
+
+exports.killEgg = functions.https.onCall(async (data, context) => {
+
+  // Checking that the user is authenticated.
+  if (!context.auth) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+        'while authenticated.');
+  }
+
+  await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.DeadConfirmed);
+
+  return true;
+});
+
 
 //   
 //   exports.openRoom = functions.https.onCall(async (data, context) => {

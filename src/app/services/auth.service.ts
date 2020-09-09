@@ -58,6 +58,7 @@ export class AuthService {
                         const user = await confirmationResult.confirm(d.confirmationCode);
                         // console.log('confirmation', JSON.stringify(user));
                         // this.user = user.user;
+                        window.location.reload();
                     }
                  }
                 ]});
