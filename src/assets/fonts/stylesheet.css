@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'DoloresExtraBold';
+    src: url('DoloresExtraBold.woff2') format('woff2'),
+        url('DoloresExtraBold.woff') format('woff'),
+        url('DoloresExtraBold.svg#DoloresExtraBold') format('svg');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+

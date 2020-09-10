@@ -25,3 +25,16 @@
 #container a {
   text-decoration: none;
 }
+
+ion-title, ion-title {
+  font-family: 'DoloresExtraBold';
+  color: var(--pz-color2);
+  text-shadow: 2px 2px var(--pz-color1);
+}
+
+@media (min-width: 400px) {
+  #container {
+      max-width: 400px;
+      margin: auto;
+  }
+}

@@ -1,8 +1,20 @@
-hi
 <ion-img [src]="imgurl"></ion-img>
 <p>
   {{fullname}}
 </p>
+ <!-- fab placed to the bottom end -->
+ <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="statsModal()">
+    <ion-icon name="stats-chart-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-fab vertical="bottom" horizontal="start" slot="fixed">
+  <ion-fab-button (click)="itemsModal()">
+    <ion-icon name="apps-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<!--
 <ion-button (click)="statsModal()"><ion-icon name="stats-chart-outline"></ion-icon></ion-button>
 <ion-button (click)="itemsModal()"><ion-icon name="apps-outline"></ion-icon></ion-button>
 <ion-button (click)="killEgg()"><ion-icon name="skull-outline"></ion-icon></ion-button>
+-->

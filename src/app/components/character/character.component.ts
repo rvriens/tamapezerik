@@ -6,6 +6,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ModalController, AlertController } from '@ionic/angular';
 import { ItemsPage } from '../../items/items.page';
 import { StatsPage } from '../../stats/stats.page';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-character',
@@ -18,6 +19,7 @@ export class CharacterComponent implements OnInit {
   imgurl: string; // SafeResourceUrl;
   constructor(
     private characterService: CharacterService,
+    private fireStorage: AngularFireStorage,
     private eggService: EggService,
     private detector: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
@@ -28,22 +30,29 @@ export class CharacterComponent implements OnInit {
   ngOnInit() {
     this.characterService.getCharacter().subscribe( c => {
       if (c) {
-        this.imgurl = `/assets/characters/${c.name}.png`;
-        setTimeout(() => this.detector.detectChanges(), 10);
+        this.fullname = c.fullname;
+
+        const ref = this.fireStorage.ref(`/characters/${c.name}/${c.mood ?? 'neutral'}.png`);
+        ref.getDownloadURL().toPromise().then( (url) => {
+          this.imgurl = url; // this.sanitizer.bypassSecurityTrustResourceUrl( url);
+          setTimeout(() => this.detector.detectChanges(), 10);
+        });
       }
     });
   }
 
   async itemsModal() {
     const modal = await this.modalController.create({
-      component: ItemsPage
+      component: ItemsPage,
+      cssClass: 'modal-items'
     });
     return await modal.present();
   }
 
   async statsModal() {
     const modal = await this.modalController.create({
-      component: StatsPage
+      component: StatsPage,
+      cssClass: 'modal-items'
     });
     return await modal.present();
   }
