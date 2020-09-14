@@ -3,3 +3,6 @@
 <app-egg *ngIf="(eggStatus | async) == EggStadia.DeadConfirmed" (openEgg)="openEgg($event)"></app-egg>
 <app-intro *ngIf="(eggStatus | async) == EggStadia.Opening"></app-intro>
 <app-character *ngIf="(eggStatus | async) == EggStadia.Alive"></app-character>
+<app-dead *ngIf="(eggStatus | async) == EggStadia.Dead" ></app-dead>
+
+

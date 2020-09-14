@@ -7,6 +7,10 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { ItemsPage } from '../../items/items.page';
 import { StatsPage } from '../../stats/stats.page';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireMessaging } from '@angular/fire/messaging';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AuthService } from 'src/app/services/auth.service';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-character',
@@ -20,11 +24,15 @@ export class CharacterComponent implements OnInit {
   constructor(
     private characterService: CharacterService,
     private fireStorage: AngularFireStorage,
+    private fireMessaging: AngularFireMessaging,
+    private fireStore: AngularFirestore,
+    private auth: AuthService,
     private eggService: EggService,
     private detector: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
     private alertController: AlertController,
-    public modalController: ModalController
+    public modalController: ModalController,
+    private fns: AngularFireFunctions,
   ) { }
 
   ngOnInit() {
@@ -39,7 +47,53 @@ export class CharacterComponent implements OnInit {
         });
       }
     });
+
+    // this.fireMessaging.onMessage()
+    /*this.fireMessaging.requestToken
+      .subscribe(
+        (token) =>
+        {
+          console.log('Permission granted! Save to the server!', token);
+          this.saveToken(token);
+
+        },
+        (error) => { console.error(error); },
+      );*/
+    /*this.fireMessaging.tokenChanges
+      .subscribe(
+        (token) =>
+        {
+          console.log('Permission granted! Save to the server!', token);
+          this.saveToken(token);
+
+        },
+        (error) => { console.error(error); },
+      );
+    
+    this.fireMessaging.messages
+      .subscribe((message) => { console.log(message); });
+      */
   }
+
+  /*
+  async testMessage() {
+
+
+    const testMessage = this.fns.httpsCallable('testMessage');
+    const item = 'test1';
+    const result = await testMessage({item}).toPromise();
+    console.log('openegg result', result);
+
+    if (result) {
+      //
+    }
+  }
+
+  async saveToken(token: string): Promise<void> {
+    const messagingRef = this.fireStore.collection('messaging').doc(await this.auth.getUserUid());
+    messagingRef.set({token});
+  }
+  */
 
   async itemsModal() {
     const modal = await this.modalController.create({
@@ -48,6 +102,7 @@ export class CharacterComponent implements OnInit {
     });
     return await modal.present();
   }
+
 
   async statsModal() {
     const modal = await this.modalController.create({

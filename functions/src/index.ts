@@ -8,6 +8,81 @@ import { CharacterStatus } from './models/characterstatus.enum';
 
 admin.initializeApp();
 
+type FunctionOnDataSnapshot = (childSnapshot: admin.database.DataSnapshot) => Promise<any>;
+export const asyncForEach = async (dataSnapshot: admin.database.DataSnapshot, childFunction: FunctionOnDataSnapshot) => {
+    const toWait: any[] = [];
+    dataSnapshot.forEach(childSnapshot => {
+        toWait.push(childFunction((childSnapshot)));
+    });
+    await Promise.all(toWait);
+};
+
+exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').onRun(async (context) => {
+
+  console.log('This will be run every 5 minutes!');
+  
+
+  /*
+  async context => {
+
+        // Consistent timestamp
+        const now = admin.firestore.Timestamp.now();
+                // Query all documents ready to perform
+        const query = db.collection('tasks').where('performAt', '<=', now).where('status', '==', 'scheduled');
+
+        const tasks = await query.get();
+  */
+
+  
+  const activeCharacters = await admin.database().ref(`/users`).orderByChild("character/status").equalTo(1).once('value');
+  
+  await asyncForEach(activeCharacters, async action => {
+    const characterKey = action.key;
+    const user: any = action.val();
+    if (characterKey !== null) {
+      await characterUpdate(characterKey, user.character);
+    }
+  });
+
+  return null;
+});
+
+async function characterUpdate(characterKey: string, character: Character): Promise<void> {
+  console.log("key", characterKey, "value", JSON.stringify(character));
+  const modStats: any = {
+    hydration: -1,
+    food: -1,
+    love: -1,
+    health: 1,
+    pezerik: -0.5
+  };
+  const stats: any = character.stats;
+
+  let minStat = 100;
+  Object.keys(modStats).forEach(
+    key => {
+      stats[key] += modStats[key];
+      if (stats[key] < minStat) {
+        minStat = stats[key];
+      }
+    }
+  );
+  let newMood = 'neutral';
+  if (minStat < 10) {
+    newMood = 'sad';
+  }
+  if (minStat > 60) {
+    newMood = 'happy'
+  }
+  if (character.mood !== newMood) {
+    await admin.database().ref(`/users/${characterKey}/character/mood`).set(newMood);
+  }
+  if (minStat < 0) {
+    await admin.database().ref(`/users/${characterKey}/character/status`).set(CharacterStatus.Dead);
+  }
+  await admin.database().ref(`/users/${characterKey}/character/stats`).set(stats);
+
+}
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -37,7 +112,23 @@ exports.closeOpening = functions.https.onCall(async (data, context) => {
 });
 
 
+exports.confirmDead = functions.https.onCall(async (data, context) => {
+    // Checking that the user is authenticated.
+    if (!context.auth) {
+      // Throwing an HttpsError so that the client gets the error details.
+      throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+          'while authenticated.');
+    }
+  
+    const x: Character = (await admin.database().ref(`/users/${context.auth.uid}/character`).once('value')).val();
+    if (x && x.status !== CharacterStatus.Dead) {
+        return false;
+    }
 
+    await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.Dead);
+
+    return true;
+});
 
 exports.openEgg = functions.https.onCall(async (data, context) => {
   //const key: string = data.key;
@@ -77,6 +168,7 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
     const characterData = characterdoc.data();
     if (characterData) {
         character.name = characterData.name;
+        character.fullname = characterData.fullname;
         character.type = characterData.type;
     }
   }

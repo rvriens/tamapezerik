@@ -7,6 +7,7 @@ import { TamagotchiComponent } from './tamagotchi/tamagotchi.component';
 import { EggComponent } from './egg/egg.component';
 import { ServicesModule } from '../services/services.module';
 import { IntroComponent } from './intro/intro.component';
+import { DeadComponent } from './dead/dead.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { IntroComponent } from './intro/intro.component';
     CharacterComponent,
     TamagotchiComponent,
     EggComponent,
-    IntroComponent]
+    IntroComponent,
+    DeadComponent]
 })
 export class ComponentsModule { }

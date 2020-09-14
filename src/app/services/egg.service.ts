@@ -31,6 +31,15 @@ export class EggService {
     }
   }
 
+  async confirmDead(): Promise<void> {
+    const confirmDead = this.fns.httpsCallable('confirmDead');
+    const result = await confirmDead({}).toPromise();
+    console.log('Confirm dead', result);
+    if (result) {
+      //
+    }
+  }
+
   async killEgg(): Promise<void> {
     const closeOpening = this.fns.httpsCallable('killEgg');
     const result = await closeOpening({}).toPromise();
