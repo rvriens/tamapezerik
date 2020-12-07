@@ -18,6 +18,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
 import { ServicesModule } from './services/services.module';
+import { StoreModule } from '@ngrx/store';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { ServicesModule } from './services/services.module';
     AngularFireAuthModule,
     AngularFireStorageModule,
     AngularFireFunctionsModule,
-    AngularFireMessagingModule
+    AngularFireMessagingModule,
+    StoreModule.forRoot({}, {})
   ],
   providers: [
     StatusBar,
