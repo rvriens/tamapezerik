@@ -5,6 +5,7 @@ import * as admin from 'firebase-admin';
 
 import { Character } from './models/character.model';
 import { CharacterStatus } from './models/characterstatus.enum';
+import { ItemAction } from './models/itemaction.model';
 
 admin.initializeApp();
 
@@ -125,7 +126,7 @@ exports.confirmDead = functions.https.onCall(async (data, context) => {
         return false;
     }
 
-    await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.Dead);
+    await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.DeadConfirmed);
 
     return true;
 });
@@ -223,7 +224,11 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
 
   await admin.database().ref(`/users/${context.auth.uid}/character/stats`).set(stats);
 
-  return true;
+  const itemAction = new ItemAction();
+  itemAction.success = true;
+  // itemAction.message = "" 
+  itemAction.animation = item;
+  return ;
 });
 
 exports.closeOpening = functions.https.onCall(async (data, context) => {

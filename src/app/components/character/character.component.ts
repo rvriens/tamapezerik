@@ -11,6 +11,7 @@ import { AngularFireMessaging } from '@angular/fire/messaging';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
 import { AngularFireFunctions } from '@angular/fire/functions';
+import { ItemAction } from 'functions/src/models/itemaction.model';
 
 @Component({
   selector: 'app-character',
@@ -69,7 +70,7 @@ export class CharacterComponent implements OnInit {
         },
         (error) => { console.error(error); },
       );
-    
+
     this.fireMessaging.messages
       .subscribe((message) => { console.log(message); });
       */
@@ -99,6 +100,10 @@ export class CharacterComponent implements OnInit {
     const modal = await this.modalController.create({
       component: ItemsPage,
       cssClass: 'modal-items'
+    });
+    modal.onDidDismiss<ItemAction>().then ( (data) =>
+    {
+      console.log(data);
     });
     return await modal.present();
   }

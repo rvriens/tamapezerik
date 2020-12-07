@@ -9,6 +9,11 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-frikandel, kroket, confetti, bier, polonaise, water
-<ion-button (click)="give('beer')"><ion-icon name="beer-outline"></ion-icon></ion-button>
+<ng-container *ngFor="let item of items | async">
+  <ion-button (click)="give(item.id)">{{item.name}}</ion-button>
+  <!--
+    <ion-icon name="beer-outline"></ion-icon>
+  -->
+</ng-container>
+
 </ion-content>

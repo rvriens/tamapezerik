@@ -4,6 +4,7 @@ import { Character } from '../../../functions/src/models/character.model';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { AuthService } from './auth.service';
 import { AngularFireFunctions } from '@angular/fire/functions';
+import { ItemAction } from 'functions/src/models/itemaction.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,13 +24,14 @@ export class CharacterService {
     return this.character;
   }
 
-  async giveItem(item: string): Promise<void> {
+  async giveItem(item: string): Promise<ItemAction> {
     const giveItem = this.fns.httpsCallable('giveItem');
-    const result = await giveItem({item}).toPromise();
-    console.log('openegg result', result);
+    const result: ItemAction = await giveItem({item}).toPromise();
+    console.log('give item', result);
     if (result) {
-      //
+      return result;
     }
+    return null;
   }
 
   private async initStatusWatcher() {
