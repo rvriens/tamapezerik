@@ -20,6 +20,7 @@ import { ComponentsModule } from './components/components.module';
 import { ServicesModule } from './services/services.module';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     AngularFireFunctionsModule,
     AngularFireMessagingModule,
     StoreModule.forRoot({}, {}),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    EffectsModule.forRoot([])
   ],
   providers: [
     StatusBar,
