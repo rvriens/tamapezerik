@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { DeadComponent } from './dead.component';
@@ -7,7 +7,7 @@ describe('DeadComponent', () => {
   let component: DeadComponent;
   let fixture: ComponentFixture<DeadComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DeadComponent ],
       imports: [IonicModule.forRoot()]
