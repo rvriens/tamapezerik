@@ -21,12 +21,17 @@ import { ServicesModule } from './services/services.module';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
+import { CharacterEffects } from './effects/character.effects';
+import { AppEffects } from './effects/user.effects';
+import * as CharacterReducers from './reducers/character.reducer';
+import * as AppReducers from './reducers/app.reducer';
 
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule,
+  imports: [
+    BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
     ComponentsModule,
@@ -38,9 +43,9 @@ import { EffectsModule } from '@ngrx/effects';
     AngularFireStorageModule,
     AngularFireFunctionsModule,
     AngularFireMessagingModule,
-    StoreModule.forRoot({}, {}),
+    StoreModule.forRoot({app: AppReducers.reducer, character: CharacterReducers.reducer}, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    EffectsModule.forRoot([])
+    EffectsModule.forRoot([AppEffects, CharacterEffects])
   ],
   providers: [
     StatusBar,

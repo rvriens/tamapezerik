@@ -6,25 +6,51 @@ import { User } from 'firebase';
 import { AlertController } from '@ionic/angular';
 import { Observable } from 'rxjs/internal/Observable';
 import { Subject, BehaviorSubject } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { State } from '../reducers/app.reducer';
+import { appSetUser } from '../actions/app.actions';
+import { map } from 'rxjs/operators';
+import { selectLoading, selectUser, selectUserUid } from '../selectors/app.selectors';
+import { AppState } from '../reducers/app.state';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    user: User;
-    userSubscription = new Subject<User>();
+
+    userIsLoggedIn = false;
 
     constructor(
         public  afAuth: AngularFireAuth,
         public  router: Router,
+        public store: Store<AppState>,
         private alertCtrl: AlertController) {
+
+            this.store.pipe(select(selectUser)).subscribe( u =>
+                {
+                    console.log('user uid', u);
+                    this.userIsLoggedIn = !!u?.uid;
+                 } );
+
+            this.store.pipe(select(selectLoading)).subscribe( l =>
+                    {
+                        console.log('loading', l);
+                     } );
+     }
+
+     initAuthFirebase(): void {
+        /*if (localStorage.getItem('user') != null) {
+            const user: User = JSON.parse(localStorage.getItem('user'));
+            this.store.dispatch(appSetUser({useruid: user?.uid}));
+        }*/
         this.afAuth.authState.subscribe(user => {
-            // console.log('user 1', user);
-            this.userSubscription.next(user);
-            // console.log('user 2', user);
+            if (user?.uid) {
+                this.store.dispatch(appSetUser({useruid: user.uid}));
+            }
+            // this.userSubscription.next(user);
             if (user) {
-              this.user = user;
-              localStorage.setItem('user', JSON.stringify(this.user));
+              // this.user = user;
+              localStorage.setItem('user', JSON.stringify(user));
             } else {
               localStorage.setItem('user', null);
             }
@@ -32,14 +58,7 @@ export class AuthService {
      }
 
      async getUserUid(): Promise<string> {
-         if (this.user != null) {
-            return this.user.uid;
-         }
-         return new Promise<string>(resolve =>
-                        this.userSubscription.subscribe(
-                            user => resolve(user ? user.uid : null)
-                            )
-                        );
+         return this.store.select(selectUserUid).toPromise();
      }
 
      async loginMobile(phone: string, container: any) {
@@ -160,7 +179,8 @@ export class AuthService {
     }
 
     get isLoggedIn(): boolean {
-        const  user  =  JSON.parse(localStorage.getItem('user'));
-        return  user  !==  null;
+        // const  user  =  JSON.parse(localStorage.getItem('user'));
+        // return  user  !==  null;
+        return this.userIsLoggedIn;
     }
 }

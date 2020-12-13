@@ -5,6 +5,9 @@ import { AngularFireDatabase } from '@angular/fire/database';
 import { AuthService } from './auth.service';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { ItemAction } from 'functions/src/models/itemaction.model';
+import { Store } from '@ngrx/store';
+import { selectUserUid } from '../selectors/app.selectors';
+import { AppState } from '../reducers/app.state';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +19,7 @@ export class CharacterService {
 
   constructor(private db: AngularFireDatabase,
               private fns: AngularFireFunctions,
+              private store: Store<AppState>,
               private auth: AuthService) {
     this.initWatcher = this.initStatusWatcher();
   }
@@ -40,20 +44,16 @@ export class CharacterService {
     if (!characterSession) {
       this.character.next(JSON.parse(characterSession));
     }
-    if (!this.auth.isLoggedIn) {
-       this.auth.userSubscription.subscribe(u => {
-         if (u?.uid) {
-           this.initStatusWatcher();
-         }
-       });
-       return;
-    }
-    const uid = await this.auth.getUserUid();
 
-    this.db.database.ref(`users/${uid}/character`).on('value', (snapshot) => {
-      const character = snapshot.val();
-      sessionStorage.setItem('character', JSON.stringify(character));
-      this.character.next(character);
-    });
+    this.store.select(selectUserUid).subscribe(uid =>
+          {
+           if (!uid) { return; }
+           this.db.database.ref(`users/${uid}/character`).on('value', (snapshot) => {
+              const character = snapshot.val();
+              sessionStorage.setItem('character', JSON.stringify(character));
+              this.character.next(character);
+            });
+         });
+
   }
 }
