@@ -3,7 +3,7 @@ import { CharacterService } from 'src/app/services/character.service';
 import { EggService } from 'src/app/services/egg.service';
 import { map } from 'rxjs/operators';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController, PopoverController } from '@ionic/angular';
 import { ItemsPage } from '../../items/items.page';
 import { StatsPage } from '../../stats/stats.page';
 import { AngularFireStorage } from '@angular/fire/storage';
@@ -12,6 +12,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { ItemAction } from 'functions/src/models/itemaction.model';
+import { promise } from 'protractor';
+import { MessagePopoverComponent } from '../messagepopover/messagepopover.component';
 
 @Component({
   selector: 'app-character',
@@ -22,6 +24,8 @@ export class CharacterComponent implements OnInit {
 
   fullname: string;
   imgurl: string; // SafeResourceUrl;
+  itemUrl: string;
+  itemout = false;
   constructor(
     private characterService: CharacterService,
     private fireStorage: AngularFireStorage,
@@ -34,6 +38,7 @@ export class CharacterComponent implements OnInit {
     private alertController: AlertController,
     public modalController: ModalController,
     private fns: AngularFireFunctions,
+    public popoverController: PopoverController
   ) { }
 
   ngOnInit() {
@@ -101,11 +106,45 @@ export class CharacterComponent implements OnInit {
       component: ItemsPage,
       cssClass: 'modal-items'
     });
-    modal.onDidDismiss<ItemAction>().then ( (data) =>
+    modal.onDidDismiss<ItemAction>().then ( (data: {data: {success: boolean; animation: string}}) =>
     {
       console.log(data);
+      if (data.data?.animation) {
+        this.showItemAnimation(data.data?.animation);
+      }
     });
     return await modal.present();
+  }
+
+  testMessage(e){
+    this.messagePopup('Ik heb wel dorst', e);
+  }
+  async messagePopup(message: string, ev: any) {
+
+    const popover = await this.popoverController.create({
+      component: MessagePopoverComponent,
+      cssClass: 'message-popover',
+      showBackdrop: false,
+      event: ev,
+      translucent: false,
+      componentProps: {message}
+    });
+    return await popover.present();
+  }
+
+  async showItemAnimation(item: string) {
+    const ref = this.fireStorage.ref(`/items/${item}.gif`);
+    ref.getDownloadURL().toPromise().then( async (url) => {
+          this.itemout = false;
+          this.itemUrl = url;
+          setTimeout(() => this.detector.detectChanges(), 10);
+          await new Promise(r => setTimeout(() => r(), 2500));
+          this.itemout = true;
+          setTimeout(() => this.detector.detectChanges(), 10);
+          await new Promise(r => setTimeout(() => r(), 2500));
+          this.itemUrl = url;
+          setTimeout(() => this.detector.detectChanges(), 10);
+        });
   }
 
 

@@ -51,10 +51,10 @@ exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').o
 async function characterUpdate(characterKey: string, character: Character): Promise<void> {
   console.log("key", characterKey, "value", JSON.stringify(character));
   const modStats: any = {
-    hydration: -1,
-    food: -1,
-    love: -1,
-    health: 1,
+    hydration: -0.2,
+    food: -0.2,
+    love: -0.2,
+    health: 0.6,
     pezerik: -0.5
   };
   const stats: any = character.stats;
@@ -63,13 +63,19 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   Object.keys(modStats).forEach(
     key => {
       stats[key] += modStats[key];
+      if (stats[key] > 100) {
+        stats[key] = 100;
+      }
+      if (stats[key] < 0) {
+        stats[key] = 0;
+      }
       if (stats[key] < minStat) {
         minStat = stats[key];
       }
     }
   );
   let newMood = 'neutral';
-  if (minStat < 10) {
+  if (minStat < 15) {
     newMood = 'sad';
   }
   if (minStat > 60) {
@@ -78,7 +84,7 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   if (character.mood !== newMood) {
     await admin.database().ref(`/users/${characterKey}/character/mood`).set(newMood);
   }
-  if (minStat < 0) {
+  if (minStat <= 0) {
     await admin.database().ref(`/users/${characterKey}/character/status`).set(CharacterStatus.Dead);
   }
   await admin.database().ref(`/users/${characterKey}/character/stats`).set(stats);
@@ -228,7 +234,7 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
   itemAction.success = true;
   // itemAction.message = "" 
   itemAction.animation = item;
-  return ;
+  return itemAction;
 });
 
 exports.closeOpening = functions.https.onCall(async (data, context) => {

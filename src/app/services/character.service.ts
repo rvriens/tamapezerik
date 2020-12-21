@@ -15,13 +15,10 @@ import { AppState } from '../reducers/app.state';
 export class CharacterService {
   character: BehaviorSubject<Character> = new BehaviorSubject<Character>(null);
 
-  private initWatcher: Promise<void>;
-
   constructor(private db: AngularFireDatabase,
               private fns: AngularFireFunctions,
-              private store: Store<AppState>,
-              private auth: AuthService) {
-    this.initWatcher = this.initStatusWatcher();
+              private store: Store<AppState>) {
+    this.initStatusWatcher();
   }
 
   getCharacter(): Subject<Character> {

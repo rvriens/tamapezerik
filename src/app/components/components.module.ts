@@ -8,6 +8,7 @@ import { EggComponent } from './egg/egg.component';
 import { ServicesModule } from '../services/services.module';
 import { IntroComponent } from './intro/intro.component';
 import { DeadComponent } from './dead/dead.component';
+import { MessagePopoverComponent } from './messagepopover/messagepopover.component';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { DeadComponent } from './dead/dead.component';
     TamagotchiComponent,
     EggComponent,
     IntroComponent,
-    DeadComponent]
+    DeadComponent,
+    MessagePopoverComponent]
 })
 export class ComponentsModule { }

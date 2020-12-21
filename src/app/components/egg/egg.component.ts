@@ -11,7 +11,7 @@ export class EggComponent implements OnInit {
 
   ngOnInit() {}
 
-  open() {
+  open(ev: Event) {
     this.openEgg.emit();
   }
 

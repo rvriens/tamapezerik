@@ -26,7 +26,7 @@ export class TamagotchiComponent implements OnInit {
   ngOnInit() {
   }
 
-  openEgg() {
+  openEgg(ev: Event) {
     sessionStorage.setItem('eggopening', 'true');
     if (!this.authService.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -44,7 +44,7 @@ export class TamagotchiComponent implements OnInit {
             this.authService.isLoggedIn) {
               sessionStorage.setItem('eggopening', 'false');
               sessionStorage.removeItem('eggopening');
-              this.openEgg();
+              this.openEgg(null);
               return;
           }
           setTimeout(() =>

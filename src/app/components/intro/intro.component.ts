@@ -33,7 +33,7 @@ export class IntroComponent implements OnInit {
     });
   }
 
-  closeOpening() {
+  closeOpening(ev: Event) {
     this.eggService.closeOpening();
   }
 

@@ -12,7 +12,7 @@ export class DeadComponent implements OnInit {
 
   ngOnInit() {}
 
-  playAgain() {
+  playAgain(ev: Event) {
     this.eggService.confirmDead();
     this.confirmDead.emit();
   }

@@ -28,6 +28,9 @@ const characterReducer = createReducer(
     on(CharacterActions.newMessage, (state, {message, messagetype }) =>
         ({ ...state,
             message: {...state.message, message, type: messagetype}})),
+    on(CharacterActions.readMessage, (state) =>
+        ({ ...state,
+            message: null})),
   );
 
 export function reducer(state: State | undefined, action: Action) {
