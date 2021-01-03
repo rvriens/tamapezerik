@@ -39,17 +39,11 @@ export class AuthService {
      }
 
      initAuthFirebase(): void {
-        /*if (localStorage.getItem('user') != null) {
-            const user: User = JSON.parse(localStorage.getItem('user'));
-            this.store.dispatch(appSetUser({useruid: user?.uid}));
-        }*/
         this.afAuth.authState.subscribe(user => {
             if (user?.uid) {
                 this.store.dispatch(appSetUser({useruid: user.uid}));
             }
-            // this.userSubscription.next(user);
             if (user) {
-              // this.user = user;
               localStorage.setItem('user', JSON.stringify(user));
             } else {
               localStorage.setItem('user', null);

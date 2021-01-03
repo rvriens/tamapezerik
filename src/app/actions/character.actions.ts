@@ -1,4 +1,3 @@
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { createAction, props } from '@ngrx/store';
 import { MessageType } from '../reducers/character.reducer';
 

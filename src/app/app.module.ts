@@ -22,9 +22,13 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
 import { CharacterEffects } from './effects/character.effects';
-import { AppEffects } from './effects/user.effects';
+import { AppEffects } from './effects/app.effects';
+import { EggEffects } from './effects/egg.effects';
 import * as CharacterReducers from './reducers/character.reducer';
 import * as AppReducers from './reducers/app.reducer';
+import * as EggReducers from './reducers/egg.reducer';
+import { initalAppState } from './reducers/app.state';
+
 
 
 @NgModule({
@@ -43,9 +47,10 @@ import * as AppReducers from './reducers/app.reducer';
     AngularFireStorageModule,
     AngularFireFunctionsModule,
     AngularFireMessagingModule,
-    StoreModule.forRoot({app: AppReducers.reducer, character: CharacterReducers.reducer}, {}),
+    StoreModule.forRoot({app: AppReducers.reducer, egg: EggReducers.reducer, character: CharacterReducers.reducer},
+      {initialState: initalAppState}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    EffectsModule.forRoot([AppEffects, CharacterEffects])
+    EffectsModule.forRoot([AppEffects, CharacterEffects, EggEffects])
   ],
   providers: [
     StatusBar,

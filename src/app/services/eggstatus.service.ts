@@ -7,6 +7,7 @@ import { isNumber } from 'util';
 import { Store } from '@ngrx/store';
 import { selectUserUid } from '../selectors/app.selectors';
 import { AppState } from '../reducers/app.state';
+import { setEggStatus } from '../actions/egg.actions';
 
 
 export enum EggStatus {
@@ -26,8 +27,7 @@ export class EggstatusService {
   private initWatcher: Promise<void>;
 
   constructor(private db: AngularFireDatabase,
-              private store: Store<AppState>,
-              private auth: AuthService) {
+              private store: Store<AppState>) {
     this.initWatcher = this.initStatusWatcher();
   }
 
@@ -35,12 +35,7 @@ export class EggstatusService {
     return this.eggStatus;
   }
 
-  private async initStatusWatcher() {
-
-    const eggStatusSession = sessionStorage.getItem('eggStatus');
-    if (!eggStatusSession && isNumber(eggStatusSession)) {
-      this.eggStatus.next(parseInt(eggStatusSession, 10));
-    }
+  loadEggStatus() {
 
     this.store.select(selectUserUid).subscribe( uid => {
       if (!uid) {
@@ -72,10 +67,22 @@ export class EggstatusService {
             eggStatus = EggStatus.New;
             break;
         }
-        sessionStorage.setItem('eggStatus', eggStatus.toString());
-        this.eggStatus.next(eggStatus);
-        console.log('egg status', eggStatus);
+        // sessionStorage.setItem('eggStatus', eggStatus.toString());
+        // this.eggStatus.next(eggStatus);
+        // console.log('egg status', eggStatus);
+        this.store.dispatch(setEggStatus({status: eggStatus}));
+
       });
     });
+  }
+
+  private async initStatusWatcher() {
+
+    const eggStatusSession = sessionStorage.getItem('eggStatus');
+    if (!eggStatusSession && isNumber(eggStatusSession)) {
+      this.eggStatus.next(parseInt(eggStatusSession, 10));
+    }
+
+    this.loadEggStatus();
   }
 }
