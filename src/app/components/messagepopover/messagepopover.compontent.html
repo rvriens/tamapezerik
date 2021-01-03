@@ -1,1 +1,6 @@
-<div>{{message}}</div>
+<p class="bubble speech">
+    {{message}}
+    <ion-button fill="clear" class="close" (click)="closePopup.emit()">
+        <ion-icon slot="icon-only" size="small" name="close"></ion-icon>
+    </ion-button>
+</p>

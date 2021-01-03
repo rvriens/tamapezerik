@@ -7,6 +7,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 })
 export class MessagePopoverComponent implements OnInit {
     @Input() message: string;
+    @Output() closePopup = new EventEmitter();
     ngOnInit(): void {
     }
 }

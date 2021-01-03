@@ -35,19 +35,71 @@
 
 .message-popover-control {
     position: fixed;
-    top: 20%;
-    left: 50%;
+    left: 0;
+    right: 0;
+    top: 0;
+    margin: auto;
     width:10px;
     height:10px;
     background-color: yellow;
     opacity: 0;
     margin: auto;
 }
+.character-container {
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+}
 
 message-popover .popover-content {
     width: 80%;
     top: 70px;
-    left: 30px;
+    left: 0;
+    right: 0;
+    margin: auto;
     bottom: 70px;
     font-size: 20px;
   }
+
+  .character-message-in {
+    padding-top: 30%; 
+    margin-bottom: -30%;
+    animation: message-in 0.75s ease-in;
+  }
+
+@keyframes message-in {
+    0% { padding-top: 0%; margin-bottom: 0%}
+    100% { padding-top: 30%; margin-bottom: -30% }
+}
+
+.character-message-out {
+    padding-top: 0; 
+    margin-bottom: 0;
+    animation: message-out 0.75s ease-out;
+  }
+
+@keyframes message-out {
+    0% { padding-top: 30%; margin-bottom: -30%}
+    100% { padding-top: 0%; margin-bottom: 0% }
+}
+
+
+.fullname {
+    position: fixed;
+    bottom: 0.5em;
+    margin: auto;
+    left: 0;
+    right: 0;
+    font-family: 'DoloresExtraBold';
+    color: var(--pz-color2);
+    text-shadow: 2px 2px var(--pz-color1);
+    font-size: xx-large;
+}
+
+ion-fab-button {
+    --background: var(--pz-color1)
+}
+
+.fab-button-in-list {
+    --background: var(--pz-color2)
+}

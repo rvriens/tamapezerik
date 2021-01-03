@@ -21,9 +21,11 @@ import { MessagePopoverComponent } from '../messagepopover/messagepopover.compon
   styleUrls: ['./character.component.scss'],
 })
 export class CharacterComponent implements OnInit {
-
   fullname: string;
-  imgurl: string; // SafeResourceUrl;
+  showmessagein = false;
+  showmessageout = false;
+  message: string;
+  imgurl: string;
   itemUrl: string;
   itemout = false;
   constructor(
@@ -116,20 +118,40 @@ export class CharacterComponent implements OnInit {
     return await modal.present();
   }
 
+  closeMessage() {
+    // console.log("abc");
+    this.message = null;
+    // this.showmessagein = false;
+    // this.showmessageout = true;
+    this.detector.detectChanges();
+  }
+
   testMessage(e){
-    this.messagePopup('Ik heb wel dorst', e);
+    this.messagePopup('Ik heb dorst', e);
   }
   async messagePopup(message: string, ev: any) {
 
-    const popover = await this.popoverController.create({
+    // this.showmessagein = true;
+    // this.showmessageout = false;
+
+    this.detector.detectChanges();
+    /*const popover = await this.popoverController.create({
       component: MessagePopoverComponent,
       cssClass: 'message-popover',
       showBackdrop: false,
       event: ev,
       translucent: false,
-      componentProps: {message}
+      componentProps: {message},
     });
-    return await popover.present();
+    */
+    this.message = message;
+    this.detector.detectChanges();
+
+    // await new Promise(resolve => setTimeout(resolve, 750));
+    // await popover.present();
+
+    // this.showmessagein = false;
+    // this.showmessageout = true;
   }
 
   async showItemAnimation(item: string) {
@@ -138,10 +160,10 @@ export class CharacterComponent implements OnInit {
           this.itemout = false;
           this.itemUrl = url;
           setTimeout(() => this.detector.detectChanges(), 10);
-          await new Promise(r => setTimeout(() => r(), 2500));
+          await new Promise<void>(r => setTimeout(() => r(), 2500));
           this.itemout = true;
           setTimeout(() => this.detector.detectChanges(), 10);
-          await new Promise(r => setTimeout(() => r(), 2500));
+          await new Promise<void>(r => setTimeout(() => r(), 2500));
           this.itemUrl = url;
           setTimeout(() => this.detector.detectChanges(), 10);
         });

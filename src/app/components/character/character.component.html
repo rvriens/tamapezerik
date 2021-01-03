@@ -1,7 +1,10 @@
-<ion-img [src]="imgurl"></ion-img>
-<p>
+<div class="character-container">
+  <app-messagepopover *ngIf="message" (closePopup)="closeMessage()" [message]="message"></app-messagepopover>
+  <ion-img [class.character-message-in]="showmessagein" [class.character-message-out]="showmessageout"  [src]="imgurl"></ion-img>
+</div>
+<div class="fullname">
   {{fullname}}
-</p>
+</div>
  <!-- fab placed to the bottom end -->
 
 <ion-fab vertical="bottom" horizontal="start" slot="fixed">
@@ -30,6 +33,7 @@
 </div>
 <div #messageControl class="message-popover-control" (click)="testMessage($event)">
 </div>
+
 <!--
 <ion-button (click)="statsModal()"><ion-icon name="stats-chart-outline"></ion-icon></ion-button>
 <ion-button (click)="itemsModal()"><ion-icon name="apps-outline"></ion-icon></ion-button>

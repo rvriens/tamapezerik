@@ -6,6 +6,7 @@
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+  min-height: 100%;
 }
 
 #container strong {
@@ -24,6 +25,10 @@
 
 #container a {
   text-decoration: none;
+}
+
+ion-content {
+  --overflow: hidden;
 }
 
 ion-title, ion-title {
