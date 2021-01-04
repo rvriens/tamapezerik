@@ -1,5 +1,5 @@
 <div class="character-container">
-  <app-messagepopover *ngIf="message" (closePopup)="closeMessage()" [message]="message"></app-messagepopover>
+  <app-messagepopover *ngIf="message | async" (closePopup)="closeMessage()" [message]="(message | async).text"></app-messagepopover>
   <ion-img [class.character-message-in]="showmessagein" [class.character-message-out]="showmessageout"  [src]="imgurl"></ion-img>
 </div>
 <div class="fullname">
@@ -23,7 +23,7 @@
     <ion-fab-button (click)="killEgg()">
       <ion-icon name="skull-outline"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="messageControl.click()">
+    <ion-fab-button (click)="randomMessage()">
       <ion-icon name="flower-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab-list>
@@ -31,11 +31,3 @@
 <div class="item-overlay" [class.out]="itemout" *ngIf="itemUrl">
   <ion-img [src]="itemUrl"></ion-img>
 </div>
-<div #messageControl class="message-popover-control" (click)="testMessage($event)">
-</div>
-
-<!--
-<ion-button (click)="statsModal()"><ion-icon name="stats-chart-outline"></ion-icon></ion-button>
-<ion-button (click)="itemsModal()"><ion-icon name="apps-outline"></ion-icon></ion-button>
-<ion-button (click)="killEgg()"><ion-icon name="skull-outline"></ion-icon></ion-button>
--->

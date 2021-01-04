@@ -27,10 +27,14 @@ const characterReducer = createReducer(
     initialState,
     on(CharacterActions.newMessage, (state, {message, messagetype }) =>
         ({ ...state,
-            message: {...state.message, message, type: messagetype}})),
+            message: {...state.message, text: message, type: messagetype}})),
     on(CharacterActions.readMessage, (state) =>
         ({ ...state,
             message: null})),
+    on(CharacterActions.loadMessages, (state) =>
+        ({ ...state})),
+    on(CharacterActions.failedMessageLoading, (state) =>
+        ({ ...state})),
   );
 
 export function reducer(state: State | undefined, action: Action) {

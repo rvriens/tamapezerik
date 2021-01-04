@@ -42,6 +42,9 @@ exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').o
     const user: any = action.val();
     if (characterKey !== null) {
       await characterUpdate(characterKey, user.character);
+      if (!user.character.message && Math.floor(Math.random() * 10) === 0 ) {
+        await loadMessage(characterKey);
+      }
     }
   });
 
@@ -49,12 +52,19 @@ exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').o
 });
 
 async function characterUpdate(characterKey: string, character: Character): Promise<void> {
-  console.log("key", characterKey, "value", JSON.stringify(character));
+  // console.log("key", characterKey, "value", JSON.stringify(character));
+  const date = admin.firestore.Timestamp.now();
+
+  if (date.toDate().getHours() > 22 && date.toDate().getHours() < 8) {
+    if (Math.floor(Math.random() * 10) < 8 ) {
+      return;
+    }
+  }
   const modStats: any = {
     hydration: -0.2,
     food: -0.2,
     love: -0.2,
-    health: 0.6,
+    health: 0.4,
     pezerik: -0.5
   };
   const stats: any = character.stats;
@@ -97,6 +107,67 @@ async function characterUpdate(characterKey: string, character: Character): Prom
 exports.helloWorld = functions.https.onRequest((request, response) => {
  response.send("Hi there");
 });
+
+exports.randomMessage = functions.https.onCall(async (data, context) => {
+
+  // Checking that the user is authenticated.
+  if (!context.auth) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+        'while authenticated.');
+  }
+
+  const cs: CharacterStatus = (await admin.database().ref(`/users/${context.auth.uid}/character/status`).once('value')).val();
+  if (cs !== CharacterStatus.Alive) {
+      return false;
+  }
+
+  const [message, messagecat] = await loadMessage(context.auth.uid);
+
+  return {message: message, cat: messagecat};
+});
+
+exports.readMessage = functions.https.onCall(async (data, context) => {
+
+  // Checking that the user is authenticated.
+  if (!context.auth) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+        'while authenticated.');
+  }
+
+  const cs: CharacterStatus = (await admin.database().ref(`/users/${context.auth.uid}/character/status`).once('value')).val();
+  if (cs !== CharacterStatus.Alive) {
+      return false;
+  }
+
+  await admin.database().ref(`/users/${context.auth.uid}/character/message`).remove();
+
+  return true;
+});
+
+async function loadMessage(userUid: string): Promise<any[]> {
+
+  const documents = await admin.firestore().collection('messages').listDocuments();
+  const randomIndex = Math.floor(Math.random() * documents.length);
+  const messagecat = documents[randomIndex].id;
+  console.log('messagecat', messagecat);
+
+  const documentscat = await admin.firestore().collection(`messages/${messagecat}/messages`).listDocuments();
+  const randomIndexcat = Math.floor(Math.random() * documentscat.length);
+  const id = documentscat[randomIndexcat].id;
+  console.log('messageid', id);
+
+  const messagedoc = await admin.firestore().collection(`messages/${messagecat}/messages`).doc(id).get();
+  const messagedocdata: any = messagedoc.data();
+  let message = {};
+  if (messagedocdata?.message) {
+    message = {text: messagedocdata.message, type: 1};
+    console.log('message', message, messagedocdata);
+    await admin.database().ref(`/users/${userUid}/character/message`).set(message);
+  }
+  return [message, messagecat];
+}
 
 exports.closeOpening = functions.https.onCall(async (data, context) => {
 
@@ -192,6 +263,8 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   }
 
   await admin.database().ref(`/users/${context.auth.uid}/character`).set(character);
+
+  await loadMessage(context.auth.uid);
 
   return true;
 });

@@ -43,6 +43,7 @@ export class EggstatusService {
         return;
       }
 
+
       this.db.database.ref(`users/${uid}/character/status`).on('value', (snapshot) => {
         const status: CharacterStatus = snapshot.val();
         if (!status) {

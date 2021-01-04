@@ -37,9 +37,10 @@ export class AppEffects {
         console.log('action', a);
       }),
     concatMapTo(
-          [EggActions.loadEggStatus()]
+          [EggActions.loadEggStatus(),
+          CharacterActions.loadMessages()]
       )
-    ), {dispatch: false});
+    ));
 
   constructor(
     private actions$: Actions,
