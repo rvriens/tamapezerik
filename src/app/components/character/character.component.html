@@ -1,4 +1,12 @@
 <div class="character-container">
+  <div class="stats">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-align-self-start stats-left">{{points | async | number:'0.0-0'}} punten</ion-col>
+        <ion-col class="ion-align-self-end stats-right">{{hours | async | number:'0.0-0'}} {{(hours | async) > 1 ? 'uren' : 'uur'}} </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
   <app-messagepopover *ngIf="message | async" (closePopup)="closeMessage()" [message]="(message | async).text"></app-messagepopover>
   <ion-img [class.character-message-in]="showmessagein" [class.character-message-out]="showmessageout"  [src]="imgurl"></ion-img>
 </div>

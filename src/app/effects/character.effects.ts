@@ -7,6 +7,7 @@ import { map, mergeMap, catchError, withLatestFrom, tap, delay, filter } from 'r
 import { AngularFireFunctions } from '@angular/fire/functions';
 import * as CharacterActions from '../actions/character.actions';
 import { selectUserUid } from '../selectors/app.selectors';
+import { Character } from 'functions/src/models/character.model';
 
 @Injectable()
 export class CharacterEffects {
@@ -16,10 +17,10 @@ export class CharacterEffects {
       ofType(CharacterActions.loadMessages),
       withLatestFrom(this.store.select(selectUserUid)),
       tap(([a, userUid]) => console.log('loadMessage', a, userUid)),
-      delay(5000),
       mergeMap(([action, userUid]) => this.db.object<{text, type}>(`users/${userUid}/character/message`).snapshotChanges()
         .pipe(
           tap(x => console.log('message', x)),
+          delay(5000),
           filter(ssc => ssc.type === 'value' && !!ssc.key),
           map(message => CharacterActions.newMessage({message: message.payload.val().text, messagetype: message.payload.val().type}) ),
           catchError(() => of(CharacterActions.failedMessageLoading()))
@@ -34,6 +35,26 @@ export class CharacterEffects {
       tap(() => console.error('failed loading message'))
     ), {dispatch: false});
 
+  loadCharacter$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CharacterActions.loadCharacter),
+      withLatestFrom(this.store.select(selectUserUid)),
+      tap(([a, userUid]) => console.log('loadCharacter', a, userUid)),
+      mergeMap(([action, userUid]) => this.db.object<Character>(`users/${userUid}/character`).snapshotChanges()
+        .pipe(
+          tap(x => console.log('character', x)),
+          filter(ssc => ssc.type === 'value' && !!ssc.key),
+          map(character => CharacterActions.updateCharacter(character.payload.val()) ),
+          catchError(() => of(CharacterActions.failedCharacterLoading()))
+        )
+      )
+    )
+  );
+  failedCharacters$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(CharacterActions.failedCharacterLoading),
+    tap(() => console.error('failed loading message'))
+  ), {dispatch: false});
 
   randomMessage$ = createEffect(() =>
     this.actions$.pipe(

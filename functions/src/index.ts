@@ -60,6 +60,7 @@ async function characterUpdate(characterKey: string, character: Character): Prom
       return;
     }
   }
+
   const modStats: any = {
     hydration: -0.2,
     food: -0.2,
@@ -70,6 +71,7 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   const stats: any = character.stats;
 
   let minStat = 100;
+  let avgStat = 0;
   Object.keys(modStats).forEach(
     key => {
       stats[key] += modStats[key];
@@ -82,8 +84,23 @@ async function characterUpdate(characterKey: string, character: Character): Prom
       if (stats[key] < minStat) {
         minStat = stats[key];
       }
+      avgStat += stats[key];
     }
   );
+  avgStat = avgStat / Object.keys(modStats).length / 12;
+
+  // iedere 5 minuten 12 per uur.: = 288x per dag
+  let points = character.points ?? 0;
+  points += avgStat;
+
+  // bereken uren actief
+  const oneHour = 60 * 60 * 1000; // minutes*seconds*milliseconds
+  const firstDate = <number>character.creating;
+  const secondDate = date.toMillis();
+  const diffHours = Math.round(Math.abs((firstDate - secondDate) / oneHour));
+
+
+  //
   let newMood = 'neutral';
   if (minStat < 15) {
     newMood = 'sad';
@@ -98,8 +115,13 @@ async function characterUpdate(characterKey: string, character: Character): Prom
     await admin.database().ref(`/users/${characterKey}/character/status`).set(CharacterStatus.Dead);
   }
   await admin.database().ref(`/users/${characterKey}/character/stats`).set(stats);
-
+  await admin.database().ref(`/users/${characterKey}/character/points`).set(points);
+  if (character.hours !== diffHours) {
+    await admin.database().ref(`/users/${characterKey}/character/hours`).set(diffHours);
+  }
 }
+
+
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -232,6 +254,8 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   const character: Character = {
     creating: admin.database.ServerValue.TIMESTAMP,
     updated: admin.database.ServerValue.TIMESTAMP,
+    points: 0,
+    hours: 0,
     status: CharacterStatus.Opening,
     stats: {
         love: 50,

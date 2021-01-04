@@ -96,6 +96,27 @@ message-popover .popover-content {
     font-size: xx-large;
 }
 
+.stats {
+    position: fixed;
+    top: 10px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    
+    font-family: 'DoloresExtraBold';
+    color: var(--pz-color2);
+    text-shadow: 2px 2px 1px var(--pz-color1);
+    font-size: x-large;
+}
+
+.stats-left {
+    text-align: left;
+}
+.stats-right {
+    text-align: right;
+}
+
+
 ion-fab-button {
     --background: var(--pz-color1)
 }

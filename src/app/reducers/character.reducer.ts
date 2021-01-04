@@ -1,4 +1,5 @@
 import { Action, createReducer, on } from '@ngrx/store';
+import { Character } from 'functions/src/models/character.model';
 import * as CharacterActions from '../actions/character.actions';
 
 export enum MessageType {
@@ -14,12 +15,14 @@ export interface State {
         type: MessageType
     };
   away: number;
+  character: Character;
 }
 
 
 export const initialState: State = {
     message: null,
     away: 0,
+    character: null
   };
 
 
@@ -35,6 +38,10 @@ const characterReducer = createReducer(
         ({ ...state})),
     on(CharacterActions.failedMessageLoading, (state) =>
         ({ ...state})),
+    on(CharacterActions.loadCharacter, (state) =>
+        ({ ...state})),
+    on(CharacterActions.updateCharacter, (state, character) =>
+        ({ ...state, character})),
   );
 
 export function reducer(state: State | undefined, action: Action) {

@@ -11,4 +11,7 @@ export class Character {
     public stats?: {love: number; health: number; pezerik: number; hydration: number; food: number; };
     public initial?: string;
     public tip?: string;
+    public points?: number;
+    public alias?: string;
+    public hours?: number;
 }

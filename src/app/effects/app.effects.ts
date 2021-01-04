@@ -38,7 +38,8 @@ export class AppEffects {
       }),
     concatMapTo(
           [EggActions.loadEggStatus(),
-          CharacterActions.loadMessages()]
+          CharacterActions.loadMessages(),
+          CharacterActions.loadCharacter()]
       )
     ));
 

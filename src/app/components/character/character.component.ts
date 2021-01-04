@@ -13,8 +13,9 @@ import { StatsPage } from '../../stats/stats.page';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from '../../services/auth.service';
 import { ItemAction } from 'functions/src/models/itemaction.model';
-import { selectMessage } from '../../selectors/character.selectors';
+import { selectMessage, selectHours, selectPoints } from '../../selectors/character.selectors';
 import * as CharacterActions from '../../actions/character.actions';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-character',
@@ -26,6 +27,8 @@ export class CharacterComponent implements OnInit {
   showmessagein = false;
   showmessageout = false;
   message: Observable<{text: string, type: number}>;
+  points: Observable<number>;
+  hours: Observable<number>;
   imgurl: string;
   itemUrl: string;
   itemout = false;
@@ -46,7 +49,10 @@ export class CharacterComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.message = this.store.select(selectMessage);
+    this.points = this.store.select(selectPoints).pipe(tap(q => console.log('points', q)));
+    this.hours = this.store.select(selectHours);
 
     this.characterService.getCharacter().subscribe( c => {
       if (c) {
