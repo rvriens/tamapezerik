@@ -4,6 +4,13 @@
 <p>
   Klik op het ei om deze te openen.
 </p>
-<p>
-  Of het eitje gaat in de pan.
-</p>
+<ion-fab vertical="bottom" horizontal="start" slot="fixed">
+  <ion-fab-button (click)="info()">
+    <ion-icon name="information"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-fab vertical="bottom" horizontal="end"  slot="fixed">
+  <ion-fab-button (click)="pan()">
+    <ion-icon name="settings"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

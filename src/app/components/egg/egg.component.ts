@@ -15,4 +15,10 @@ export class EggComponent implements OnInit {
     this.openEgg.emit();
   }
 
+  info() {
+  }
+
+  pan(){
+  }
+
 }
