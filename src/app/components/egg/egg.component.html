@@ -1,16 +1,41 @@
-<p>
+<!-- EGG -->
+<p *ngIf="!friedegg">
   <ion-img class="egg" src="assets/egg.png" (click)="open($event)"></ion-img>
 </p>
-<p>
-  Klik op het ei om deze te openen.
+<p *ngIf="!friedegg">
+  Open snel het eitje <br />
+  en verzorg je eigen Pezerik!
 </p>
+
+<!-- FRIED EGG -->
+<p *ngIf="friedegg">
+  Dat is jammer je had {{(friedcharacter | async)?.fullname}}<span class="eat-egg-loading" *ngIf="!(friedcharacter | async)"><ion-spinner class="loading-spinner" name="circles"></ion-spinner></span>
+</p>
+<p *ngIf="friedegg">
+  <ion-img class="friedegg" src="assets/friedegg.png" (click)="closefriedegg($event)"></ion-img>
+</p>
+<p *ngIf="friedegg">
+  Het eitje wordt gebakken.<br />
+  <br />
+  Smakelijk!<br />
+  <br />
+   
+  <i>Als je klaar bent met eten, druk dan op volgende</i>
+</p>
+
 <ion-fab vertical="bottom" horizontal="start" slot="fixed">
   <ion-fab-button (click)="info()">
     <ion-icon name="information"></ion-icon>
   </ion-fab-button>
 </ion-fab>
-<ion-fab vertical="bottom" horizontal="end"  slot="fixed">
+
+<ion-fab *ngIf="!friedegg" vertical="bottom" horizontal="end"  slot="fixed">
   <ion-fab-button (click)="pan()">
-    <ion-icon name="settings"></ion-icon>
+    <fa-icon size="lg" icon="utensils"></fa-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-fab *ngIf="friedegg" vertical="bottom" horizontal="end"  slot="fixed">
+  <ion-fab-button (click)="closefriedegg()">
+    <fa-icon size="lg" icon="arrow-right"></fa-icon>
   </ion-fab-button>
 </ion-fab>

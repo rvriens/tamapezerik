@@ -12,12 +12,14 @@ export enum EggStatus {
 export interface State {
   loading: boolean;
   status: EggStatus;
+  eatcharacter: {name: string, fullname: string};
 }
 
 
 export const initialState: State = {
     loading: false,
     status: EggStatus.New,
+    eatcharacter: null
   };
 
 
@@ -29,6 +31,10 @@ const eggReducer = createReducer(
         ({...state, loading: true})),
     on(EggActions.setEggStatus, (state, {status}) =>
         ({ ...state, loading: false, status})),
+    on(EggActions.eatEgg, (state ) =>
+        ({ ...state, eatcharacter: null })),
+    on(EggActions.setEatEgg, (state, eatcharacter ) =>
+        ({ ...state, eatcharacter }))
   );
 
 export function reducer(state: State | undefined, action: Action) {

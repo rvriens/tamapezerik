@@ -1,3 +1,16 @@
 .egg  { 
     cursor: grab;
 }
+
+.friedegg  { 
+    cursor: grab;
+}
+
+/* Works - pass "my-custom-class" in cssClass to increase specificity */
+.panpopup .alert-wrapper {
+    background: #e5e5e5;
+  }
+
+.eat-egg-loading {
+    vertical-align: middle;
+}

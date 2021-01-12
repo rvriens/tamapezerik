@@ -6,6 +6,7 @@ import * as admin from 'firebase-admin';
 import { Character } from './models/character.model';
 import { CharacterStatus } from './models/characterstatus.enum';
 import { ItemAction } from './models/itemaction.model';
+import { ItemHistory } from './models/itemhistory.model';
 
 admin.initializeApp();
 
@@ -230,6 +231,26 @@ exports.confirmDead = functions.https.onCall(async (data, context) => {
     return true;
 });
 
+exports.eatEgg = functions.https.onCall(async (data, context) => {
+ 
+  const documents = await admin.firestore().collection('characters').listDocuments();
+  const randomIndex = Math.floor(Math.random() * documents.length);
+  const id = documents[randomIndex].id;
+
+  const character: {name?: string, fullname?: string} = {name: 'empty', fullname: 'Henkie'};
+
+  const characterdoc = await admin.firestore().collection('characters').doc(id).get();
+  if (characterdoc.data()) {
+    const characterData = characterdoc.data();
+    if (characterData) {
+        character.name = characterData.name;
+        character.fullname = characterData.fullname;
+    }
+  }
+  return character;
+  
+});
+
 exports.openEgg = functions.https.onCall(async (data, context) => {
   //const key: string = data.key;
   //let answer: string = data.answer;
@@ -311,20 +332,119 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
       return false;
   }
 
+  const date = admin.firestore.Timestamp.now()
+
   const stats: any = (await admin.database().ref(`/users/${context.auth.uid}/character/stats`).once('value')).val();
 
-  const itemdoc = await admin.firestore().collection('items').doc(item).get();
-  if (itemdoc.data()) {
-    const itemData = itemdoc.data();
-    if (itemData) {
-      Object.keys(itemData.stats).forEach(
-        key => {
-          stats[key] += itemData.stats[key];
-        }
-      );
+  // item history
+  const itemhistorySnap = await admin.firestore().collection(`userlog/${context.auth.uid}/items`).doc(item).get();
+  let itemhistory: ItemHistory | null = null;
+  const itemhistoryData = itemhistorySnap.data();
+  if (itemhistoryData) {
+    itemhistory = {
+      counthour: itemhistoryData.counthour,
+      lasthour: itemhistoryData.lasthour,
+      countday: itemhistoryData.countday,
+      lastday: itemhistoryData.lastday,
+    };
+  }
+  
+
+
+  if (itemhistory) {
+    
+    const oneHour = 60 * 60 * 1000;
+    const lastHour = itemhistory.lasthour?.toMillis();
+    console.log('date diff', date.toMillis(), lastHour, date.toMillis() - (lastHour ?? 0), oneHour)
+    if (!lastHour || (date.toMillis() - lastHour) > oneHour) {
+      itemhistory.lasthour = date;
+      itemhistory.counthour = 0;
     }
+    const oneDay = 24 * 60 * 60 * 1000;
+    const lastDay = itemhistory.lastday?.toMillis();
+    if (!lastDay || (date.toMillis() - lastDay) >  oneDay) {
+      itemhistory.lastday = date;
+      itemhistory.countday = 0;
+    }
+
   }
 
+  let maxperday: number | null = null;
+  let maxperhour: number | null = null;
+  let mutstats: {[key: string]: number} = {};
+
+  const itemdoc = await admin.firestore().collection('items').doc(item).get();
+
+    const itemData = itemdoc.data();
+
+    if (itemData) {
+      maxperday = itemData.maxperday;
+      maxperhour = itemData.maxperhour;
+      mutstats = itemData.stats;
+    }
+
+    const type: string = (await admin.database().ref(`/users/${context.auth.uid}/character/type`).once('value')).val();
+    const name: string = (await admin.database().ref(`/users/${context.auth.uid}/character/name`).once('value')).val();
+
+    const itemTypeDoc = await admin.firestore().collection('items').doc(item).collection('types').doc(type).get();
+
+    const itemTypeData = itemTypeDoc.data();
+
+    if (itemTypeData?.stats) {
+      mutstats = itemTypeData.stats;
+    }
+    if (itemTypeData?.maxperday) {
+      maxperday = itemTypeData.maxperday;
+    }
+    if (itemTypeData?.maxperhour) {
+      maxperhour = itemTypeData.maxperhour;
+    }
+
+    const itemNameDoc = await admin.firestore().collection('items').doc(item).collection('names').doc(name).get();
+    const itemNameData = itemNameDoc.data();
+    if (itemNameData?.stats) {
+      mutstats = itemNameData.stats;
+    }
+    if (itemNameData?.maxperday) {
+      maxperday = itemNameData.maxperday;
+    }
+    if (itemNameData?.maxperhour) {
+      maxperhour = itemNameData.maxperhour;
+    }
+
+    if (maxperday === 0) {
+      return {success: false, message: 'Dat is toch helemaal niks voor mij!'}
+    }
+
+
+
+    if (itemhistory?.countday && maxperday && itemhistory.countday >= maxperday) {
+      // const message = {text: 'Even genoeg gehad voor vandaag', type: 2};
+      // await admin.database().ref(`/users/${context.auth.uid}/character/message`).set(message);
+      return {success: false, message: 'Even genoeg gehad voor vandaag'}
+    }
+    if (itemhistory?.counthour && maxperhour && itemhistory.counthour >= maxperhour) {
+      // const message = {text: 'Even genoeg gehad', type: 2};
+      // await admin.database().ref(`/users/${context.auth.uid}/character/message`).set(message);
+      return {success: false, message: 'Even genoeg gehad'}
+    }
+    
+
+    Object.keys(stats).forEach(
+      key => {
+        if (mutstats[key] && (stats[key] + mutstats[key]) < 100)
+          stats[key] += mutstats[key];
+      }
+    );
+  
+
+  const newhistory: ItemHistory = {
+    counthour: (itemhistory?.counthour ?? 0) + 1,
+    lasthour: itemhistory?.lasthour ?? date,
+    countday: (itemhistory?.countday ?? 0) + 1,
+    lastday: itemhistory?.lastday ?? date,
+  }
+  await admin.firestore().collection(`userlog/${context.auth.uid}/items`).doc(item).set(newhistory)
   await admin.database().ref(`/users/${context.auth.uid}/character/stats`).set(stats);
 
   const itemAction = new ItemAction();

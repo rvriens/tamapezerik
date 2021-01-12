@@ -72,9 +72,14 @@ export class CharacterComponent implements OnInit {
       component: ItemsPage,
       cssClass: 'modal-items'
     });
-    modal.onDidDismiss<ItemAction>().then ( (data: {data: {success: boolean; animation: string}}) =>
+    modal.onDidDismiss<ItemAction>().then ( (data: {data: {success: boolean; message: string; animation: string}}) =>
     {
       console.log(data);
+      if (data.data.message) {
+        this.store.dispatch(CharacterActions.newMessage({message: data.data.message, messagetype: 2}));
+      } else {
+        this.store.dispatch(CharacterActions.readMessage());
+      }
       if (data.data?.animation) {
         this.showItemAnimation(data.data?.animation);
       }

@@ -28,7 +28,10 @@ import * as CharacterReducers from './reducers/character.reducer';
 import * as AppReducers from './reducers/app.reducer';
 import * as EggReducers from './reducers/egg.reducer';
 import { initalAppState } from './reducers/app.state';
-
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+// import { fab } from '@fortawesome/free-brands-svg-icons'
 
 
 @NgModule({
@@ -40,6 +43,7 @@ import { initalAppState } from './reducers/app.state';
     AppRoutingModule,
     ComponentsModule,
     ServicesModule,
+    FontAwesomeModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAnalyticsModule,
     AngularFirestoreModule,
@@ -59,4 +63,8 @@ import { initalAppState } from './reducers/app.state';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    library.addIconPacks(far, fas); // fab
+  }
+}

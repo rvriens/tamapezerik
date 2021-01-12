@@ -7,6 +7,7 @@ import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
 import { ComponentsModule } from '../components/components.module';
 import { ServicesModule } from '../services/services.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { ServicesModule } from '../services/services.module';
     IonicModule,
     ComponentsModule,
     ServicesModule,
-    HomePageRoutingModule
+    HomePageRoutingModule,
+    FontAwesomeModule
   ],
   declarations: [HomePage]
 })
