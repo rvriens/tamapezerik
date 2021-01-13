@@ -56,7 +56,7 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   // console.log("key", characterKey, "value", JSON.stringify(character));
   const date = admin.firestore.Timestamp.now();
 
-  if (date.toDate().getHours() > 22 && date.toDate().getHours() < 8) {
+  if (date.toDate().getHours() > 22 || date.toDate().getHours() < 8) {
     if (Math.floor(Math.random() * 10) < 8 ) {
       return;
     }

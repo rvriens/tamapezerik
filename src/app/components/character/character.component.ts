@@ -32,6 +32,8 @@ export class CharacterComponent implements OnInit {
   imgurl: string;
   itemUrl: string;
   itemout = false;
+  thumburl: string;
+
   constructor(
     private characterService: CharacterService,
     private fireStorage: AngularFireStorage,
@@ -97,17 +99,28 @@ export class CharacterComponent implements OnInit {
 
   async showItemAnimation(item: string) {
     const ref = this.fireStorage.ref(`/items/${item}.gif`);
-    ref.getDownloadURL().toPromise().then( async (url) => {
-          this.itemout = false;
-          this.itemUrl = url;
-          setTimeout(() => this.detector.detectChanges(), 10);
-          await new Promise<void>(r => setTimeout(() => r(), 2500));
-          this.itemout = true;
-          setTimeout(() => this.detector.detectChanges(), 10);
-          await new Promise<void>(r => setTimeout(() => r(), 2500));
-          this.itemUrl = url;
-          setTimeout(() => this.detector.detectChanges(), 10);
+
+    ref.getDownloadURL().toPromise().then( async (url) =>  this.loadItemUrl(url)
+        ).catch(async () => {
+            console.error('failed loading', item);
+            if (!this.thumburl) {
+              const thumbRef = this.fireStorage.ref(`/items/thumb.gif`);
+              this.thumburl = await thumbRef.getDownloadURL().toPromise();
+            }
+            this.loadItemUrl(this.thumburl);
         });
+  }
+
+  async loadItemUrl(url: string) {
+    this.itemout = false;
+    this.itemUrl = url;
+    setTimeout(() => this.detector.detectChanges(), 10);
+    await new Promise<void>(r => setTimeout(() => r(), 2500));
+    this.itemout = true;
+    setTimeout(() => this.detector.detectChanges(), 10);
+    await new Promise<void>(r => setTimeout(() => r(), 2500));
+    this.itemUrl = url;
+    setTimeout(() => this.detector.detectChanges(), 10);
   }
 
 

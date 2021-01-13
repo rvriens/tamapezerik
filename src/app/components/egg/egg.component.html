@@ -12,7 +12,7 @@
   Dat is jammer je had {{(friedcharacter | async)?.fullname}}<span class="eat-egg-loading" *ngIf="!(friedcharacter | async)"><ion-spinner class="loading-spinner" name="circles"></ion-spinner></span>
 </p>
 <p *ngIf="friedegg">
-  <ion-img class="friedegg" src="assets/friedegg.png" (click)="closefriedegg($event)"></ion-img>
+  <ion-img class="friedegg" src="assets/friedegg.png" (click)="closefriedegg()"></ion-img>
 </p>
 <p *ngIf="friedegg">
   Het eitje wordt gebakken.<br />
