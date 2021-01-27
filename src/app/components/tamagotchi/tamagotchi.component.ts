@@ -21,10 +21,7 @@ export class TamagotchiComponent implements OnInit {
   public EggStadia = EggStatus;
 
   constructor(private store: Store,
-              private eggService: EggService,
-              private router: Router,
-              private authService: AuthService,
-              private detector: ChangeDetectorRef) {
+              private authService: AuthService) {
 
   }
 
@@ -44,11 +41,12 @@ export class TamagotchiComponent implements OnInit {
 
   }
 
-  openEgg(ev: Event) {
+  async openEgg(ev: Event) {
     sessionStorage.setItem('eggopening', 'true');
     if (!this.authService.isLoggedIn) {
-      this.router.navigate(['/login']);
-      return;
+      // this.router.navigate(['/login']);
+      // return;
+      await this.authService.anonymouslySignin();
     }
     // this.eggService.openEgg();
     this.store.dispatch(EggActions.openEgg());

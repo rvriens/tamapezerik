@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Observable, of } from 'rxjs';
-import { map, mergeMap, catchError, concatMapTo, tap } from 'rxjs/operators';
+import { map, mergeMap, catchError, concatMapTo, tap, filter } from 'rxjs/operators';
 import * as CharacterActions from '../actions/character.actions';
 import * as EggActions from '../actions/egg.actions';
 import * as AppActions from '../actions/app.actions';
@@ -34,14 +34,33 @@ export class AppEffects {
       this.actions$.pipe(
       ofType(AppActions.appSetUser),
       tap((a) => {
-        console.log('action', a);
+        console.log('appSetUser', a);
       }),
+      filter((a) => a.useruid != null),
     concatMapTo(
           [EggActions.loadEggStatus(),
           CharacterActions.loadMessages(),
           CharacterActions.loadCharacter()]
       )
     ));
+
+  setUser2$ = createEffect(() =>
+      this.actions$.pipe(
+      ofType(AppActions.appSetUser),
+      tap((a) => {
+        console.log('No user', a);
+      }),
+      filter((a) => a.useruid == null),
+      concatMapTo(
+          [AppActions.appFinishLoading()]
+      )
+    ));
+
+  logout$ = createEffect(() =>
+    this.actions$.pipe(
+    ofType(AppActions.appLogout),
+    tap(() => this.authService.logout()),
+  ), {dispatch: false});
 
   constructor(
     private actions$: Actions,

@@ -12,6 +12,8 @@ export class IntroComponent implements OnInit {
 
   public initialText: string;
   public tipText: string;
+  public alias: string;
+
   slideOpts = {
     initialSlide: 0,
     speed: 400
@@ -34,7 +36,7 @@ export class IntroComponent implements OnInit {
   }
 
   closeOpening(ev: Event) {
-    this.eggService.closeOpening();
+    this.eggService.closeOpening(this.alias);
   }
 
 }

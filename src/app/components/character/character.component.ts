@@ -33,6 +33,7 @@ export class CharacterComponent implements OnInit {
   itemUrl: string;
   itemout = false;
   thumburl: string;
+  itemurls: {[item: string]: string} = {};
 
   constructor(
     private characterService: CharacterService,
@@ -98,17 +99,19 @@ export class CharacterComponent implements OnInit {
   }
 
   async showItemAnimation(item: string) {
-    const ref = this.fireStorage.ref(`/items/${item}.gif`);
-
-    ref.getDownloadURL().toPromise().then( async (url) =>  this.loadItemUrl(url)
-        ).catch(async () => {
-            console.error('failed loading', item);
-            if (!this.thumburl) {
-              const thumbRef = this.fireStorage.ref(`/items/thumb.gif`);
-              this.thumburl = await thumbRef.getDownloadURL().toPromise();
-            }
-            this.loadItemUrl(this.thumburl);
-        });
+    if (!this.itemurls[item]) {
+    try {
+      const ref = this.fireStorage.ref(`/items/${item}.gif`);
+      this.itemurls[item] = (await ref.getDownloadURL().toPromise());
+      } catch (e) {
+        if (!this.thumburl) {
+          const thumbRef = this.fireStorage.ref(`/items/thumb.png`);
+          this.thumburl = await thumbRef.getDownloadURL().toPromise();
+        }
+        this.itemurls[item] = this.thumburl;
+      }
+    }
+    this.loadItemUrl(this.itemurls[item]);
   }
 
   async loadItemUrl(url: string) {

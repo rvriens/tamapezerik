@@ -1,0 +1,5 @@
+<ion-list>
+    <ion-list-header>Gebruiker</ion-list-header>
+    <ion-item button *ngIf="!(user | async).isPhone" (click)="phoneSignup()">Inloggen met telefoon</ion-item>
+    <ion-item button *ngIf="(user | async).uid" lines="none" (click)="logout()">Uitloggen</ion-item>
+</ion-list>

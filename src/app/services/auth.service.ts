@@ -38,10 +38,11 @@ export class AuthService {
                      } );
      }
 
-     initAuthFirebase(): void {
+     async initAuthFirebase(): Promise<void> {
+
         this.afAuth.authState.subscribe(user => {
             if (user?.uid) {
-                this.store.dispatch(appSetUser({useruid: user.uid}));
+                this.store.dispatch(appSetUser({useruid: user.uid, isAnonymous: user.isAnonymous, isPhone: !!user.phoneNumber}));
             }
             if (user) {
               localStorage.setItem('user', JSON.stringify(user));
@@ -49,6 +50,12 @@ export class AuthService {
               localStorage.setItem('user', null);
             }
           });
+
+        const currentUser = await this.afAuth.currentUser;
+        if (!currentUser) {
+            this.store.dispatch(appSetUser({useruid: null, isAnonymous: false, isPhone: false}));
+        }
+
      }
 
      async getUserUid(): Promise<string> {
@@ -59,7 +66,14 @@ export class AuthService {
         let recaptchaVerifier: auth.RecaptchaVerifier = null;
         try {
             recaptchaVerifier = new auth.RecaptchaVerifier(container);
-            const confirmationResult = await this.afAuth.signInWithPhoneNumber(phone, recaptchaVerifier);
+
+            /* Link current */
+            let currentUser = await this.afAuth.currentUser;
+            if (currentUser && !currentUser.isAnonymous) {
+                currentUser = null;
+            }
+            const confirmationResult =  await (currentUser ? currentUser.linkWithPhoneNumber(phone, recaptchaVerifier) :
+                                                             this.afAuth.signInWithPhoneNumber(phone, recaptchaVerifier));
 
             const prompt = await this.alertCtrl.create({
                 header: 'Voer controle code in',
@@ -68,6 +82,7 @@ export class AuthService {
                   { text: 'Annuleren', role: 'cancel'},
                   { text: 'Verzenden',
                     handler: async d => {
+
                         const user = await confirmationResult.confirm(d.confirmationCode);
                         // console.log('confirmation', JSON.stringify(user));
                         // this.user = user.user;
@@ -152,6 +167,14 @@ export class AuthService {
             alert('Inloggen mislukt: '  +  e.message);
         }
         // return this.updateUserData(credential.user);
+      }
+
+      async anonymouslySignin() {
+          try {
+            const user =  await this.afAuth.signInAnonymously();
+          } catch (e) {
+            alert('Inloggen mislukt: '  +  e.message);
+          }
       }
 
 

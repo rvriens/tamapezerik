@@ -1,10 +1,18 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- ion-menu-button auto-hide="false"></ion-menu-button -->
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button (click)="presentPopover($event)">
+        <ion-icon slot="icon-only" name="person"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title size="large" class="ion-text-center">
       TamaPezerik
-      <!-- <ion-img src="assets/logo/logo-tamapezerik.png"></ion-img> -->
     </ion-title>
   </ion-toolbar>
+
 </ion-header>
 
 <ion-content [fullscreen]="false" [scrollY]="false" [scrollX]="false"> 

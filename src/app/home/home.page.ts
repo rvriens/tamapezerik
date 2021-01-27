@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
+import { ProfilePopoverPage } from '../profile-popover/profile-popover.page';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +9,18 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  constructor(public popover: PopoverController) {}
+
+  presentPopover(ev) {
+    this.popover.create(
+        {
+          component: ProfilePopoverPage,
+          event: ev,
+          showBackdrop: false
+        }).then((popoverElement) => {
+        popoverElement.present();
+      });
+  }
 
 }
+

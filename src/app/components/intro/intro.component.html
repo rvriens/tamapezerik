@@ -3,6 +3,7 @@
     <ion-text color="primary">
       <h2>{{initialText}}</h2>
     </ion-text>
+    
   </ion-slide>
   <ion-slide>
     <ion-text color="secondary">
@@ -10,7 +11,9 @@
     </ion-text>
   </ion-slide>
 </ion-slides>
-
-  
-
+<ion-item>
+  <ion-label position="stacked">Naam</ion-label>
+  <ion-input ([model])="alias"></ion-input>
+</ion-item>
+ 
 <ion-button (click)="closeOpening($event)">verder</ion-button>

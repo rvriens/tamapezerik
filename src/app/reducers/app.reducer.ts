@@ -4,6 +4,8 @@ import * as AppActions from '../actions/app.actions';
 
 export interface User {
     uid: string;
+    isPhone: boolean;
+    isAnonymous: boolean;
 }
 export interface State {
   loading: boolean;
@@ -20,7 +22,8 @@ const appReducer = createReducer(
     initialState,
     on(AppActions.appStartLoading, (state: State) => ({ ...state, loading: true})),
     on(AppActions.appFinishLoading, (state: State) => ({ ...state, loading: false})),
-    on(AppActions.appSetUser, (state: State, {useruid}) => ({ ...state, user: {uid: useruid}}))
+    on(AppActions.appLogout, (state: State) => ({ ...state, user: {uid: null, isAnonymous: false, isPhone: false}})),
+    on(AppActions.appSetUser, (state: State, {useruid, isAnonymous, isPhone}) => ({ ...state, user: {uid: useruid, isAnonymous, isPhone}}))
   );
 
 export function reducer(state: State | undefined, action: Action) {

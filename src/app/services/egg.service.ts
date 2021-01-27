@@ -22,9 +22,9 @@ export class EggService {
     }
   }
 
-  async closeOpening(): Promise<void> {
+  async closeOpening(alias: string): Promise<void> {
     const closeOpening = this.fns.httpsCallable('closeOpening');
-    const result = await closeOpening({}).toPromise();
+    const result = await closeOpening({alias}).toPromise();
     console.log('close Opening', result);
     if (result) {
       //
@@ -41,8 +41,8 @@ export class EggService {
   }
 
   async killEgg(): Promise<void> {
-    const closeOpening = this.fns.httpsCallable('killEgg');
-    const result = await closeOpening({}).toPromise();
+    const killEgg = this.fns.httpsCallable('killEgg');
+    const result = await killEgg({}).toPromise();
     console.log('killEgg', result);
     if (result) {
       //
