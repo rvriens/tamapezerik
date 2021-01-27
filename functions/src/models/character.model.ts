@@ -14,4 +14,5 @@ export class Character {
     public points?: number;
     public alias?: string;
     public hours?: number;
+    public unique?: string;
 }

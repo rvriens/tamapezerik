@@ -23,26 +23,15 @@ exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').o
 
   console.log('This will be run every 5 minutes!');
   
-
-  /*
-  async context => {
-
-        // Consistent timestamp
-        const now = admin.firestore.Timestamp.now();
-                // Query all documents ready to perform
-        const query = db.collection('tasks').where('performAt', '<=', now).where('status', '==', 'scheduled');
-
-        const tasks = await query.get();
-  */
-
-  
   const activeCharacters = await admin.database().ref(`/users`).orderByChild("character/status").equalTo(1).once('value');
   
   await asyncForEach(activeCharacters, async action => {
     const characterKey = action.key;
     const user: any = action.val();
     if (characterKey !== null) {
-      await characterUpdate(characterKey, user.character);
+      if (await characterUpdate(characterKey, user.character)) {
+        await characterHighScore(characterKey, user.character);
+      }
       if (!user.character.message && Math.floor(Math.random() * 10) === 0 ) {
         await loadMessage(characterKey);
       }
@@ -52,23 +41,86 @@ exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').o
   return null;
 });
 
-async function characterUpdate(characterKey: string, character: Character): Promise<void> {
+exports.cronjobCleanupCharacters = functions.pubsub.schedule('every 6 hours').onRun(async (context) => {
+
+  console.log('This will be run every 6 hours!');
+
+  // 2 = Dead
+  // 3 = DeadConfirmed
+  const inactiveCharacters = await admin.database().ref(`/users`).orderByChild("character/status").startAt(2).endAt(3).once('value');
+  
+  await asyncForEach(inactiveCharacters, async action => {
+    const characterKey = action.key;
+    const user: any = action.val();
+    if (characterKey !== null) {
+      await characterDelete(characterKey, user.character);
+    }
+  });
+
+  return null;
+});
+
+async function characterDelete(characterKey: string, character: Character): Promise<void> {
+  const date = admin.firestore.Timestamp.now();
+
+  if (character.status === 3) {
+    await characterRemove(characterKey);
+  } else if (character.status === 3) {
+
+    // bereken uren na laatste update
+    const oneHour = 60 * 60 * 1000; // minutes*seconds*milliseconds
+    const updateDate = <number>character.updated;
+    const secondDate = date.toMillis();
+    const diffHours = Math.abs((updateDate - secondDate) / oneHour);
+    if (diffHours > 48) {
+      await characterRemove(characterKey);
+    }
+  }
+}
+
+async function characterRemove(characterKey: string): Promise<void> {
+  try {
+    console.log('Cleanup character', characterKey);
+    await admin.firestore().collection('/userlog').doc(characterKey).delete();
+    await admin.database().ref(`/users/${characterKey}`).remove();
+  } catch {
+    console.error('Failed deleting', characterKey);
+  }
+
+}
+
+async function characterUpdate(characterKey: string, character: Character): Promise<boolean> {
   // console.log("key", characterKey, "value", JSON.stringify(character));
   const date = admin.firestore.Timestamp.now();
 
   if (date.toDate().getHours() > 22 || date.toDate().getHours() < 8) {
     if (Math.floor(Math.random() * 10) < 8 ) {
-      return;
+      return false;
     }
   }
 
-  const modStats: any = {
-    hydration: -0.2,
-    food: -0.2,
-    love: -0.2,
-    health: 0.4,
-    pezerik: -0.5
+  // bereken uren actief
+  const oneMinute = 60 * 1000; // minutes*seconds*milliseconds
+  const updateDate = <number>character.updated;
+  const updateDiffMinutes = Math.round(Math.abs((updateDate - date.toMillis()) / oneMinute));
+
+  let modStats: any = {
+    hydration: 0,
+    food: 0,
+    love: 0,
+    health: 0.1,
+    pezerik: 0
   };
+
+  if (updateDiffMinutes > 10) {
+    modStats = {
+      hydration: -0.2,
+      food: -0.2,
+      love: -0.2,
+      health: 0.4,
+      pezerik: -0.5
+    }
+  }
   const stats: any = character.stats;
 
   let minStat = 100;
@@ -114,13 +166,37 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   }
   if (minStat <= 0) {
     await admin.database().ref(`/users/${characterKey}/character/status`).set(CharacterStatus.Dead);
+    await admin.database().ref(`/users/${characterKey}/character/updated`).set(date);
   }
   await admin.database().ref(`/users/${characterKey}/character/stats`).set(stats);
   await admin.database().ref(`/users/${characterKey}/character/points`).set(points);
   if (character.hours !== diffHours) {
     await admin.database().ref(`/users/${characterKey}/character/hours`).set(diffHours);
   }
+  return true;
 }
+
+
+async function characterHighScore(characterKey: string, character: Character): Promise<void> {
+
+  if (!character.unique)
+    return;
+  if (character.status !== 1)
+    return;
+  
+  await admin.firestore().collection('highscore').doc(character.unique).set(
+    {
+      hours: character.hours,
+      points: character.points,
+      originalname: character.name,
+      name: character.alias,
+      lastupdated: admin.firestore.Timestamp.now(),
+    }, {merge: true}
+  );
+
+}
+
+
 
 
 
@@ -206,6 +282,11 @@ exports.closeOpening = functions.https.onCall(async (data, context) => {
       return false;
   }
 
+  const alias = data.alias;
+  if (alias) {
+    await admin.database().ref(`/users/${context.auth.uid}/character/alias`).set(alias);
+  }
+
   await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.Alive);
   
   
@@ -225,6 +306,8 @@ exports.confirmDead = functions.https.onCall(async (data, context) => {
     if (x && x.status !== CharacterStatus.Dead) {
         return false;
     }
+
+    await admin.firestore().collection('/userlog').doc(context.auth.uid).delete();
 
     await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.DeadConfirmed);
 
@@ -275,6 +358,7 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   const character: Character = {
     creating: admin.database.ServerValue.TIMESTAMP,
     updated: admin.database.ServerValue.TIMESTAMP,
+    unique: admin.firestore().collection('_').doc().id,
     points: 0,
     hours: 0,
     status: CharacterStatus.Opening,
@@ -348,8 +432,6 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
       lastday: itemhistoryData.lastday,
     };
   }
-  
-
 
   if (itemhistory) {
     
@@ -416,8 +498,6 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
       return {success: false, message: 'Dat is toch helemaal niks voor mij!'}
     }
 
-
-
     if (itemhistory?.countday && maxperday && itemhistory.countday >= maxperday) {
       // const message = {text: 'Even genoeg gehad voor vandaag', type: 2};
       // await admin.database().ref(`/users/${context.auth.uid}/character/message`).set(message);
@@ -428,7 +508,6 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
       // await admin.database().ref(`/users/${context.auth.uid}/character/message`).set(message);
       return {success: false, message: 'Even genoeg gehad'}
     }
-    
 
     Object.keys(stats).forEach(
       key => {
@@ -446,6 +525,7 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
   }
   await admin.firestore().collection(`userlog/${context.auth.uid}/items`).doc(item).set(newhistory)
   await admin.database().ref(`/users/${context.auth.uid}/character/stats`).set(stats);
+  await admin.database().ref(`/users/${context.auth.uid}/character/updated`).set(admin.database.ServerValue.TIMESTAMP);
 
   const itemAction = new ItemAction();
   itemAction.success = true;
@@ -482,6 +562,7 @@ exports.killEgg = functions.https.onCall(async (data, context) => {
         'while authenticated.');
   }
 
+  await admin.firestore().collection('/userlog').doc(context.auth.uid).delete();
   await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.DeadConfirmed);
 
   return true;
