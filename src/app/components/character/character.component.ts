@@ -16,6 +16,7 @@ import { ItemAction } from 'functions/src/models/itemaction.model';
 import { selectMessage, selectHours, selectPoints } from '../../selectors/character.selectors';
 import * as CharacterActions from '../../actions/character.actions';
 import { tap } from 'rxjs/operators';
+import { HighscorePage } from 'src/app/highscore/highscore.page';
 
 @Component({
   selector: 'app-character',
@@ -24,6 +25,7 @@ import { tap } from 'rxjs/operators';
 })
 export class CharacterComponent implements OnInit {
   fullname: string;
+  alias: string;
   showmessagein = false;
   showmessageout = false;
   message: Observable<{text: string, type: number}>;
@@ -60,6 +62,7 @@ export class CharacterComponent implements OnInit {
     this.characterService.getCharacter().subscribe( c => {
       if (c) {
         this.fullname = c.fullname;
+        this.alias = c.alias ?? this.fullname;
 
         const ref = this.fireStorage.ref(`/characters/${c.name}/${c.mood ?? 'neutral'}.png`);
         ref.getDownloadURL().toPromise().then( (url) => {
@@ -129,7 +132,7 @@ export class CharacterComponent implements OnInit {
 
   async statsModal() {
     const modal = await this.modalController.create({
-      component: StatsPage,
+      component: HighscorePage, // StatsPage,
       cssClass: 'modal-items'
     });
     return await modal.present();

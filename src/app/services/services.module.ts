@@ -12,6 +12,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireFunctionsModule} from '@angular/fire/functions';
 import { CharacterService } from './character.service';
 import { ItemService } from './item.service';
+import { HighscoreService } from './highscore.service';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { ItemService } from './item.service';
     EggService,
     AuthService,
     CharacterService,
-    ItemService
+    ItemService,
+    HighscoreService
   ],
   declarations: []
 })

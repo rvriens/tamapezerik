@@ -7,13 +7,20 @@
   </ion-slide>
   <ion-slide>
     <ion-text color="secondary">
+      <h2>{{fullname}}</h2>
+    </ion-text>
+  </ion-slide>
+  <ion-slide>
+    <ion-text color="secondary">
       <h2>{{tipText}}</h2>
     </ion-text>
   </ion-slide>
+
 </ion-slides>
-<ion-item>
-  <ion-label position="stacked">Naam</ion-label>
-  <ion-input ([model])="alias"></ion-input>
-</ion-item>
- 
-<ion-button (click)="closeOpening($event)">verder</ion-button>
+<form [formGroup]="closeOpeningForm" (ngSubmit)="closeOpening()">
+  <ion-item>
+    <ion-label position="stacked">Naam</ion-label>
+    <ion-input formControlName="alias"></ion-input>
+  </ion-item>
+  <ion-button type="submit">verder</ion-button>
+</form>

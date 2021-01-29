@@ -65,7 +65,7 @@ async function characterDelete(characterKey: string, character: Character): Prom
 
   if (character.status === 3) {
     await characterRemove(characterKey);
-  } else if (character.status === 3) {
+  } else if (character.status === 2) {
 
     // bereken uren na laatste update
     const oneHour = 60 * 60 * 1000; // minutes*seconds*milliseconds
@@ -93,16 +93,17 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   // console.log("key", characterKey, "value", JSON.stringify(character));
   const date = admin.firestore.Timestamp.now();
 
-  if (date.toDate().getHours() > 22 || date.toDate().getHours() < 8) {
-    if (Math.floor(Math.random() * 10) < 8 ) {
-      return false;
-    }
-  }
-
   // bereken uren actief
   const oneMinute = 60 * 1000; // minutes*seconds*milliseconds
   const updateDate = <number>character.updated;
   const updateDiffMinutes = Math.round(Math.abs((updateDate - date.toMillis()) / oneMinute));
+
+  // Voor de avond spelers (of niet!)
+  if ( updateDiffMinutes > 30 && (date.toDate().getHours() > 22 || date.toDate().getHours() < 8)) {
+    if (Math.floor(Math.random() * 10) < 8 ) {
+      return false;
+    }
+  }
 
   let modStats: any = {
     hydration: 0,
@@ -112,7 +113,8 @@ async function characterUpdate(characterKey: string, character: Character): Prom
     pezerik: 0
   };
 
-  if (updateDiffMinutes > 10) {
+  // voor de spelers die inactief zijn
+  if (updateDiffMinutes > 8) {
     modStats = {
       hydration: -0.2,
       food: -0.2,
@@ -166,7 +168,7 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   }
   if (minStat <= 0) {
     await admin.database().ref(`/users/${characterKey}/character/status`).set(CharacterStatus.Dead);
-    await admin.database().ref(`/users/${characterKey}/character/updated`).set(date);
+    await admin.database().ref(`/users/${characterKey}/character/updated`).set(admin.database.ServerValue.TIMESTAMP);
   }
   await admin.database().ref(`/users/${characterKey}/character/stats`).set(stats);
   await admin.database().ref(`/users/${characterKey}/character/points`).set(points);
@@ -184,6 +186,7 @@ async function characterHighScore(characterKey: string, character: Character): P
   if (character.status !== 1)
     return;
   
+  console.log('update highscore', character.unique);
   await admin.firestore().collection('highscore').doc(character.unique).set(
     {
       hours: character.hours,
@@ -267,32 +270,6 @@ async function loadMessage(userUid: string): Promise<any[]> {
   }
   return [message, messagecat];
 }
-
-exports.closeOpening = functions.https.onCall(async (data, context) => {
-
-  // Checking that the user is authenticated.
-  if (!context.auth) {
-    // Throwing an HttpsError so that the client gets the error details.
-    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
-        'while authenticated.');
-  }
-
-  const cs: CharacterStatus = (await admin.database().ref(`/users/${context.auth.uid}/character/status`).once('value')).val();
-  if (cs !== CharacterStatus.Opening) {
-      return false;
-  }
-
-  const alias = data.alias;
-  if (alias) {
-    await admin.database().ref(`/users/${context.auth.uid}/character/alias`).set(alias);
-  }
-
-  await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.Alive);
-  
-  
-  return true;
-});
-
 
 exports.confirmDead = functions.https.onCall(async (data, context) => {
     // Checking that the user is authenticated.
@@ -547,6 +524,13 @@ exports.closeOpening = functions.https.onCall(async (data, context) => {
   if (cs !== CharacterStatus.Opening) {
       return false;
   }
+
+  const alias = data.alias;
+  console.log('close opening - alias', data);
+  if (alias) {
+    await admin.database().ref(`/users/${context.auth.uid}/character/alias`).set(alias);
+  }
+
 
   await admin.database().ref(`/users/${context.auth.uid}/character/status`).set(CharacterStatus.Alive);
 
