@@ -17,7 +17,7 @@
   </ion-slide>
 
 </ion-slides>
-<form [formGroup]="closeOpeningForm" (ngSubmit)="closeOpening()">
+<form [formGroup]="closeOpeningForm" (ngSubmit)="closeOpening($event)">
   <ion-item>
     <ion-label position="stacked">Naam</ion-label>
     <ion-input formControlName="alias"></ion-input>

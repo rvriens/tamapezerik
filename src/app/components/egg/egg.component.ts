@@ -14,6 +14,7 @@ export class EggComponent implements OnInit {
   @Output() openEgg = new EventEmitter();
   public friedegg = false;
   public friedcharacter: Observable<{name: string, fullname: string}>;
+  public openingEgg = false;
 
   constructor(private alertController: AlertController, private store: Store) { }
 
@@ -22,6 +23,7 @@ export class EggComponent implements OnInit {
   }
 
   open(ev: Event) {
+    this.openingEgg = true;
     this.openEgg.emit();
   }
 

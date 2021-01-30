@@ -1,6 +1,7 @@
 <!-- EGG -->
 <p *ngIf="!friedegg">
-  <ion-img class="egg" src="assets/egg.png" (click)="open($event)"></ion-img>
+  <ion-img *ngIf="!openingEgg" class="egg" src="assets/egg.png" (click)="open($event)"></ion-img>
+  <ion-img *ngIf="openingEgg" src="assets/egg.gif"></ion-img>
 </p>
 <p *ngIf="!friedegg">
   Open snel het eitje <br />

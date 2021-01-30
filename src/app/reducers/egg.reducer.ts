@@ -12,6 +12,8 @@ export enum EggStatus {
 export interface State {
   loading: boolean;
   status: EggStatus;
+  eggAnimation: boolean;
+  afterAnimationStatus: null | EggStatus;
   eatcharacter: {name: string, fullname: string};
 }
 
@@ -19,6 +21,8 @@ export interface State {
 export const initialState: State = {
     loading: false,
     status: EggStatus.New,
+    eggAnimation: false,
+    afterAnimationStatus: null,
     eatcharacter: null
   };
 
@@ -28,9 +32,16 @@ const eggReducer = createReducer(
     on(EggActions.loadEggStatus, (state) =>
         ({...state, loading: true})),
     on(EggActions.openEgg, (state) =>
-        ({...state, loading: true})),
+        ({...state, eggAnimation: true, afterAnimationStatus: null})),
+    on(EggActions.finishAnimation, (state) =>
+        ({...state,
+            eggAnimation: false,
+            status: state.afterAnimationStatus ? state.afterAnimationStatus : state.status })),
     on(EggActions.setEggStatus, (state, {status}) =>
-        ({ ...state, loading: false, status})),
+        ({ ...state,
+            loading: false,
+            status: state.eggAnimation ? state.status : status,
+            afterAnimationStatus: state.eggAnimation ? status : null })),
     on(EggActions.eatEgg, (state ) =>
         ({ ...state, eatcharacter: null })),
     on(EggActions.setEatEgg, (state, eatcharacter ) =>
