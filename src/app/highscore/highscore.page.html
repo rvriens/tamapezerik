@@ -1,27 +1,34 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+			<ion-back-button></ion-back-button>
+		</ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>HighScore</ion-title>
+    <ion-title class="ion-text-center">HighScore</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-
+<ion-text color="pz">
+  <p>
+    <i>Top 11</i>
+  </p>
+</ion-text>
 <ion-grid>
   <ion-row>
-    <ion-col>Naam</ion-col>
-    <ion-col>Punten</ion-col>
-    <ion-col>Uren</ion-col>
+    <ion-col size="8">Naam</ion-col>
+    <ion-col size="4">Punten</ion-col>
+    <!-- <ion-col>Uren</ion-col> -->
   </ion-row>
   <ion-row *ngFor="let highscore of highScores">
-    <ion-col>{{highscore.name}}</ion-col>
-    <ion-col>{{highscore.points | number:'0.0-0'}}</ion-col>
-    <ion-col>{{highscore.hours | number:'0.0-0'}}</ion-col>
+    <ion-col size="8">{{highscore.name}}</ion-col>
+    <ion-col size="4">{{highscore.points | number:'0.0-0'}}</ion-col>
+    <!-- <ion-col>{{highscore.hours | number:'0.0-0'}}</ion-col> -->
   </ion-row>
 
 </ion-grid>

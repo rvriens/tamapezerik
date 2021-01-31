@@ -13,6 +13,7 @@ import { ItemService } from '../services/item.service';
 export class ItemsPage implements OnInit {
 
   public items: Observable<Item[]>;
+  public isGiving = false;
 
   constructor(public modalController: ModalController,
               private characterService: CharacterService,
@@ -27,6 +28,9 @@ export class ItemsPage implements OnInit {
   }
 
   async give(item: string) {
+    await new Promise( resolve => setTimeout(resolve, 500) );
+    if (this.isGiving) { return; }
+    this.isGiving = true;
     const itemAction = await this.characterService.giveItem(item);
     this.modalController.dismiss(itemAction);
   }

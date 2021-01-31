@@ -17,6 +17,7 @@ import { selectMessage, selectHours, selectPoints } from '../../selectors/charac
 import * as CharacterActions from '../../actions/character.actions';
 import { tap } from 'rxjs/operators';
 import { HighscorePage } from 'src/app/highscore/highscore.page';
+import { ChartsPage } from 'src/app/charts/charts.page';
 
 @Component({
   selector: 'app-character',
@@ -132,7 +133,7 @@ export class CharacterComponent implements OnInit {
 
   async statsModal() {
     const modal = await this.modalController.create({
-      component: HighscorePage, // StatsPage,
+      component: ChartsPage, // HighscorePage, // StatsPage,
       cssClass: 'modal-items'
     });
     return await modal.present();

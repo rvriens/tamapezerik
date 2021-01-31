@@ -1,10 +1,16 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="end">
+    <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="highscore()">
+        <ion-icon slot="icon-only" name="arrow-forward"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
     <ion-title class="ion-text-center">Statistieken</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -27,7 +33,8 @@
 <ion-progress-bar [color]="getColor(love)" [value]="love"></ion-progress-bar>
 </p>
 <p>
-  <ion-icon name="rose-outline" size="large"></ion-icon>
+  <!-- <ion-icon name="rose-outline" size="large"></ion-icon> -->
+  <img src="assets/pezerik.png" height="32" width="32" >
 <ion-progress-bar [color]="getColor(pezerik)" [value]="pezerik"></ion-progress-bar>
 </p>
 

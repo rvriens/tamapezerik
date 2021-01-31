@@ -1,6 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
+import { IonNav, ModalController, NavController } from '@ionic/angular';
+import { HighscorePage } from '../highscore/highscore.page';
 import { CharacterService } from '../services/character.service';
+import { HighscoreService } from '../services/highscore.service';
+
 
 @Component({
   selector: 'app-stats',
@@ -8,6 +11,7 @@ import { CharacterService } from '../services/character.service';
   styleUrls: ['./stats.page.scss'],
 })
 export class StatsPage implements OnInit {
+  @Input() public nav: IonNav;
   health: number;
   hydration: number;
   food: number;
@@ -20,6 +24,7 @@ export class StatsPage implements OnInit {
     private detector: ChangeDetectorRef) { }
 
   ngOnInit() {
+    console.log('nav', this.nav);
     this.characterService.getCharacter().subscribe( c => {
       this.health = c.stats.health / 100;
       this.hydration = c.stats.hydration / 100;
@@ -34,6 +39,10 @@ export class StatsPage implements OnInit {
     if (value < 0.15) { return 'danger'; }
     if (value < 0.3) { return 'warning'; }
     return 'success';
+  }
+
+  highscore() {
+    this.nav.push(HighscorePage);
   }
 
   dismiss() {

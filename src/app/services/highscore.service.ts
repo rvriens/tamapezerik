@@ -24,7 +24,7 @@ export class HighscoreService {
                          .collection<HighScore>('highscore')
                          .ref
                          .orderBy('points', 'desc')
-                         .limit(10);
+                         .limit(11);
       if (points) {
         highscoreQuery = highscoreQuery.startAt(points);
       }

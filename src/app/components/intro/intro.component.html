@@ -1,22 +1,25 @@
 <ion-slides pager="true" [options]="slideOpts">
   <ion-slide>
-    <ion-text color="primary">
+    <ion-text color="pz">
       <h2>{{initialText}}</h2>
     </ion-text>
     
   </ion-slide>
   <ion-slide>
-    <ion-text color="secondary">
-      <h2>{{fullname}}</h2>
+    <ion-text color="pz">
+      <h1>{{fullname}}</h1>
     </ion-text>
   </ion-slide>
   <ion-slide>
-    <ion-text color="secondary">
+    <ion-text color="pz">
       <h2>{{tipText}}</h2>
     </ion-text>
   </ion-slide>
 
 </ion-slides>
+<p>
+  <i>Geef je TamaPezerik een naam.</i>
+</p>
 <form [formGroup]="closeOpeningForm" (ngSubmit)="closeOpening($event)">
   <ion-item>
     <ion-label position="stacked">Naam</ion-label>

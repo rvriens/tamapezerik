@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import * as EggActions from '../../actions/egg.actions';
@@ -16,7 +16,9 @@ export class EggComponent implements OnInit {
   public friedcharacter: Observable<{name: string, fullname: string}>;
   public openingEgg = false;
 
-  constructor(private alertController: AlertController, private store: Store) { }
+  constructor(private alertController: AlertController,
+              private store: Store,
+              private navCtrl: NavController) { }
 
   ngOnInit() {
     this.friedcharacter = this.store.select(selectEatEgg);
@@ -28,6 +30,7 @@ export class EggComponent implements OnInit {
   }
 
   info() {
+    this.navCtrl.navigateForward('info');
   }
 
   closefriedegg() {
@@ -62,4 +65,5 @@ export class EggComponent implements OnInit {
 
     await alert.present();
   }
+
 }

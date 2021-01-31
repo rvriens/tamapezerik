@@ -27,6 +27,14 @@ const routes: Routes = [
     path: 'highscore',
     loadChildren: () => import('./highscore/highscore.module').then( m => m.HighscorePageModule)
   },
+  {
+    path: 'charts',
+    loadChildren: () => import('./charts/charts.module').then( m => m.ChartsPageModule)
+  },
+  {
+    path: 'info',
+    loadChildren: () => import('./info/info.module').then( m => m.InfoPageModule)
+  },
 ];
 
 @NgModule({

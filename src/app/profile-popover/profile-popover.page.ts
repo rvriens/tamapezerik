@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { AuthService } from '../services/auth.service';
 import * as AppActions from '../actions/app.actions';
@@ -17,7 +17,8 @@ import { User } from '../reducers/app.reducer';
 
     constructor(private popover: PopoverController,
                 private router: Router,
-                private store: Store) {}
+                private store: Store,
+                private navCtrl: NavController) {}
 
   ngOnInit(): void {
     this.user = this.store.select(selectUser);
@@ -34,6 +35,11 @@ import { User } from '../reducers/app.reducer';
 
   logout() {
     this.store.dispatch(AppActions.appLogout());
+    this.close();
+  }
+
+  info() {
+    this.navCtrl.navigateForward('info');
     this.close();
   }
 }
