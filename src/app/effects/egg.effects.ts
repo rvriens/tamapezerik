@@ -42,7 +42,6 @@ export class EggEffects {
     this.actions$.pipe(
       ofType(EggActions.eatEgg),
       mergeMap(() => this.fns.httpsCallable<any, {name: string, fullname: string}>('eatEgg')({})),
-      tap(x => console.log('eat character', x)),
       map(eatcharacter => EggActions.setEatEgg(eatcharacter))
     ));
 

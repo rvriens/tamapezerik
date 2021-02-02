@@ -28,7 +28,6 @@ export class TamagotchiComponent implements OnInit {
   ngOnInit() {
     this.eggLoading = this.store.select(selectEggLoading);
     this.eggStatus = this.store.select(selectEggStatus).pipe(tap(s => {
-      console.log('egg-status', s);
       if (s === EggStatus.New &&
         sessionStorage.getItem('eggopening') === 'true' &&
         this.authService.isLoggedIn) {
@@ -51,23 +50,4 @@ export class TamagotchiComponent implements OnInit {
     // this.eggService.openEgg();
     this.store.dispatch(EggActions.openEgg());
   }
-
-  // private async InitStatus() {
-  //   this.eggStatus = this.eggStatusService.getEggStatus();
-  //   this.eggStatus.subscribe(e =>
-  //       {
-  //         if (e === EggStatus.New &&
-  //           sessionStorage.getItem('eggopening') === 'true' &&
-  //           this.authService.isLoggedIn) {
-  //             sessionStorage.setItem('eggopening', 'false');
-  //             sessionStorage.removeItem('eggopening');
-  //             this.openEgg(null);
-  //             return;
-  //         }
-  //         setTimeout(() =>
-  //         this.detector.detectChanges(), 100);
-  //         console.log('status', e);
-  //       }
-  //   );
-  // }
 }

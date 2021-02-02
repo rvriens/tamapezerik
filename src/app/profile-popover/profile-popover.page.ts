@@ -42,4 +42,8 @@ import { User } from '../reducers/app.reducer';
     this.navCtrl.navigateForward('info');
     this.close();
   }
+
+  refresh() {
+    window.location.reload();
+  }
 }

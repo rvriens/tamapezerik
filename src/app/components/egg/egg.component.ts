@@ -51,12 +51,10 @@ export class EggComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
-            console.log('Nee');
           }
         }, {
           text: 'Ja',
           handler: () => {
-            console.log('Eet');
             this.friedegg = true;
           }
         }

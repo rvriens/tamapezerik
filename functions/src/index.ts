@@ -410,16 +410,17 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
     };
   }
 
+  const speed  = 0.3;
   if (itemhistory) {
     
-    const oneHour = 60 * 60 * 1000;
+    const oneHour = 60 * 60 * 1000 * speed;
     const lastHour = itemhistory.lasthour?.toMillis();
     console.log('date diff', date.toMillis(), lastHour, date.toMillis() - (lastHour ?? 0), oneHour)
     if (!lastHour || (date.toMillis() - lastHour) > oneHour) {
       itemhistory.lasthour = date;
       itemhistory.counthour = 0;
     }
-    const oneDay = 24 * 60 * 60 * 1000;
+    const oneDay = 24 * 60 * 60 * 1000 * speed;
     const lastDay = itemhistory.lastday?.toMillis();
     if (!lastDay || (date.toMillis() - lastDay) >  oneDay) {
       itemhistory.lastday = date;

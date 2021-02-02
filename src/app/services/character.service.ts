@@ -28,7 +28,6 @@ export class CharacterService {
   async giveItem(item: string): Promise<ItemAction> {
     const giveItem = this.fns.httpsCallable('giveItem');
     const result: ItemAction = await giveItem({item}).toPromise();
-    console.log('give item', result);
     if (result) {
       return result;
     }

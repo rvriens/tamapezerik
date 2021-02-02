@@ -20,7 +20,6 @@ export class HighscorePage implements OnInit {
 
   async loadHighScores(){
     this.highScores = await this.highScoreService.getHighScores();
-    console.log(this.highScores);
   }
 
   dismiss() {

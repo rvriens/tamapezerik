@@ -28,14 +28,8 @@ export class AuthService {
 
             this.store.pipe(select(selectUser)).subscribe( u =>
                 {
-                    console.log('user uid', u);
                     this.userIsLoggedIn = !!u?.uid;
                  } );
-
-            this.store.pipe(select(selectLoading)).subscribe( l =>
-                    {
-                        console.log('loading', l);
-                     } );
      }
 
      async initAuthFirebase(): Promise<void> {
@@ -84,8 +78,6 @@ export class AuthService {
                     handler: async d => {
 
                         const user = await confirmationResult.confirm(d.confirmationCode);
-                        // console.log('confirmation', JSON.stringify(user));
-                        // this.user = user.user;
                         window.location.reload();
                     }
                  }
@@ -129,8 +121,6 @@ export class AuthService {
                   { text: 'Verzenden',
                     handler: async d => {
                         email = d.email;
-                        // console.log('confirmation', JSON.stringify(user));
-                        // this.user = user.user;
                         this.afAuth.signInWithEmailLink(email, url);
                         this.router.navigate(['/']);
 

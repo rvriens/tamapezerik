@@ -16,10 +16,8 @@ export class CharacterEffects {
     this.actions$.pipe(
       ofType(CharacterActions.loadMessages),
       withLatestFrom(this.store.select(selectUserUid)),
-      tap(([a, userUid]) => console.log('loadMessage', a, userUid)),
       mergeMap(([action, userUid]) => this.db.object<{text, type}>(`users/${userUid}/character/message`).snapshotChanges()
         .pipe(
-          tap(x => console.log('message', x)),
           delay(5000),
           filter(ssc => ssc.type === 'value' && !!ssc.key),
           map(message => CharacterActions.newMessage({message: message.payload.val().text, messagetype: message.payload.val().type}) ),
@@ -39,10 +37,8 @@ export class CharacterEffects {
     this.actions$.pipe(
       ofType(CharacterActions.loadCharacter),
       withLatestFrom(this.store.select(selectUserUid)),
-      tap(([a, userUid]) => console.log('loadCharacter', a, userUid)),
       mergeMap(([action, userUid]) => this.db.object<Character>(`users/${userUid}/character`).snapshotChanges()
         .pipe(
-          tap(x => console.log('character', x)),
           filter(ssc => ssc.type === 'value' && !!ssc.key),
           map(character => CharacterActions.updateCharacter(character.payload.val()) ),
           catchError(() => of(CharacterActions.failedCharacterLoading()))
@@ -60,10 +56,8 @@ export class CharacterEffects {
     this.actions$.pipe(
       ofType(CharacterActions.randomMessage),
       withLatestFrom(this.store.select(selectUserUid)),
-      tap(([a, userUid]) => console.log('randomMessage', a, userUid)),
       mergeMap(([action, userUid]) => this.fns.httpsCallable('randomMessage')({})
         .pipe(
-          tap(x => console.log('message', x)),
           catchError(() => of(CharacterActions.failedMessageLoading()))
         )
       )
@@ -76,7 +70,6 @@ export class CharacterEffects {
     ofType(CharacterActions.readMessage),
     mergeMap(() => this.fns.httpsCallable('readMessage')({})
       .pipe(
-        tap(x => console.log('readMessage', x)),
         catchError(() => of(CharacterActions.failedMessageLoading()))
       )
     )

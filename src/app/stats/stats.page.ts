@@ -24,7 +24,6 @@ export class StatsPage implements OnInit {
     private detector: ChangeDetectorRef) { }
 
   ngOnInit() {
-    console.log('nav', this.nav);
     this.characterService.getCharacter().subscribe( c => {
       this.health = c.stats.health / 100;
       this.hydration = c.stats.hydration / 100;

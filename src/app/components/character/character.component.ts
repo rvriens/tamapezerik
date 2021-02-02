@@ -57,7 +57,7 @@ export class CharacterComponent implements OnInit {
   ngOnInit() {
 
     this.message = this.store.select(selectMessage);
-    this.points = this.store.select(selectPoints).pipe(tap(q => console.log('points', q)));
+    this.points = this.store.select(selectPoints);
     this.hours = this.store.select(selectHours);
 
     this.characterService.getCharacter().subscribe( c => {
@@ -81,7 +81,6 @@ export class CharacterComponent implements OnInit {
     });
     modal.onDidDismiss<ItemAction>().then ( (data: {data: {success: boolean; message: string; animation: string}}) =>
     {
-      console.log(data);
       if (data.data.message) {
         this.store.dispatch(CharacterActions.newMessage({message: data.data.message, messagetype: 2}));
       } else {

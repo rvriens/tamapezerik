@@ -14,9 +14,7 @@ export class AppEffects {
   initApp$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AppActions.appInit),
-      tap((a) => {
-          console.log('action', a);
-        }),
+      tap((a) => {  }),
       concatMapTo(
             [AppActions.appStartLoading(),
              AppActions.appInitAuth()]
@@ -33,9 +31,7 @@ export class AppEffects {
   setUser$ = createEffect(() =>
       this.actions$.pipe(
       ofType(AppActions.appSetUser),
-      tap((a) => {
-        console.log('appSetUser', a);
-      }),
+      tap((a) => { }),
       filter((a) => a.useruid != null),
     concatMapTo(
           [EggActions.loadEggStatus(),
@@ -47,9 +43,6 @@ export class AppEffects {
   setUser2$ = createEffect(() =>
       this.actions$.pipe(
       ofType(AppActions.appSetUser),
-      tap((a) => {
-        console.log('No user', a);
-      }),
       filter((a) => a.useruid == null),
       concatMapTo(
           [AppActions.appFinishLoading()]

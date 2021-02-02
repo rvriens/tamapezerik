@@ -68,9 +68,6 @@ export class EggstatusService {
             eggStatus = EggStatus.New;
             break;
         }
-        // sessionStorage.setItem('eggStatus', eggStatus.toString());
-        // this.eggStatus.next(eggStatus);
-        // console.log('egg status', eggStatus);
         this.store.dispatch(setEggStatus({status: eggStatus}));
 
       });

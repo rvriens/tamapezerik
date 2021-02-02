@@ -16,7 +16,6 @@ export class EggService {
   async openEgg(): Promise<void> {
     const openEgg = this.fns.httpsCallable('openEgg');
     const result = await openEgg({}).toPromise();
-    console.log('openegg result', result);
     if (result) {
       //
     }
@@ -25,7 +24,6 @@ export class EggService {
   async closeOpening(alias: string): Promise<void> {
     const closeOpening = this.fns.httpsCallable('closeOpening');
     const result = await closeOpening({alias}).toPromise();
-    console.log('close Opening', result);
     if (result) {
       //
     }
@@ -34,7 +32,6 @@ export class EggService {
   async confirmDead(): Promise<void> {
     const confirmDead = this.fns.httpsCallable('confirmDead');
     const result = await confirmDead({}).toPromise();
-    console.log('Confirm dead', result);
     if (result) {
       //
     }
@@ -43,7 +40,6 @@ export class EggService {
   async killEgg(): Promise<void> {
     const killEgg = this.fns.httpsCallable('killEgg');
     const result = await killEgg({}).toPromise();
-    console.log('killEgg', result);
     if (result) {
       //
     }
