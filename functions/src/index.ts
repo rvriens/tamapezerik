@@ -33,7 +33,7 @@ exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').o
         await characterHighScore(characterKey, user.character);
       }
       if (!user.character.message && Math.floor(Math.random() * 10) === 0 ) {
-        await loadMessage(characterKey);
+        await loadMessage(characterKey, user.character.type, user.character.stats);
       }
     }
   });
@@ -129,6 +129,24 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   let avgStat = 0;
   Object.keys(modStats).forEach(
     key => {
+      if (modStats[key] < 0) {
+        if (stats[key] < 20) {
+          modStats[key] = modStats[key] / 1.4;
+        } else if (stats[key] < 15) {
+          modStats[key] = modStats[key] / 1.7;
+        } else if (stats[key]  < 10) {
+          modStats[key] = modStats[key] / 2;
+        }
+      }
+      if (modStats[key] > 0) {
+        if (stats[key] > 80) {
+          modStats[key] = modStats[key] / 1.4;
+        } else if (stats[key] > 85) {
+          modStats[key] = modStats[key] / 1.7;
+        } else if (stats[key]  > 90) {
+          modStats[key] = modStats[key] / 2;
+        }
+      }
       stats[key] += modStats[key];
       if (stats[key] > 100) {
         stats[key] = 100;
@@ -175,6 +193,10 @@ async function characterUpdate(characterKey: string, character: Character): Prom
   if (character.hours !== diffHours) {
     await admin.database().ref(`/users/${characterKey}/character/hours`).set(diffHours);
   }
+  
+  character.stats = stats;
+  character.points = points;
+
   return true;
 }
 
@@ -192,8 +214,9 @@ async function characterHighScore(characterKey: string, character: Character): P
       hours: character.hours,
       points: character.points,
       originalname: character.name,
-      name: character.alias,
+      name: character.alias ?? character.fullname,
       lastupdated: admin.firestore.Timestamp.now(),
+      userid: characterKey
     }, {merge: true}
   );
 
@@ -248,15 +271,33 @@ exports.readMessage = functions.https.onCall(async (data, context) => {
   return true;
 });
 
-async function loadMessage(userUid: string): Promise<any[]> {
+async function loadMessage(userUid: string, type: string | null = null, stats: {[key: string]: number} | null = null): Promise<any[]> {
 
-  const documents = await admin.firestore().collection('messages').listDocuments();
-  const randomIndex = Math.floor(Math.random() * documents.length);
-  const messagecat = documents[randomIndex].id;
+  let messagecat: string | null = null;
+
+  if (stats) {
+    
+    let smallestvalue = 200;
+    Object.keys(stats).forEach(
+      key => {
+        if (stats[key] < smallestvalue) {
+          smallestvalue = stats[key];
+          messagecat = key;
+        }
+      }
+    );
+  }
+
+  if (!messagecat) {
+    const documents = await admin.firestore().collection('messages').listDocuments();
+    const randomIndex = Math.round(Math.random() * documents.length);
+    messagecat = documents[randomIndex].id;
+  
+  }
   console.log('messagecat', messagecat);
 
   const documentscat = await admin.firestore().collection(`messages/${messagecat}/messages`).listDocuments();
-  const randomIndexcat = Math.floor(Math.random() * documentscat.length);
+  const randomIndexcat = Math.round(Math.random() * documentscat.length);
   const id = documentscat[randomIndexcat].id;
   console.log('messageid', id);
 
@@ -264,6 +305,17 @@ async function loadMessage(userUid: string): Promise<any[]> {
   const messagedocdata: any = messagedoc.data();
   let message = {};
   if (messagedocdata?.message) {
+    if (messagedocdata?.notfor) {
+      let localtype = type;
+      if (!localtype) {
+        localtype = (await admin.database().ref(`/users/${userUid}/character/message`).once('value')).val();
+      }
+      const notfor: string[] = messagedocdata?.notfor;
+      if (notfor.some((q) => q === localtype)) {
+        return await loadMessage(userUid, type, stats);
+      }
+    }
+
     message = {text: messagedocdata.message, type: 1};
     console.log('message', message, messagedocdata);
     await admin.database().ref(`/users/${userUid}/character/message`).set(message);
@@ -294,7 +346,7 @@ exports.confirmDead = functions.https.onCall(async (data, context) => {
 exports.eatEgg = functions.https.onCall(async (data, context) => {
  
   const documents = await admin.firestore().collection('characters').listDocuments();
-  const randomIndex = Math.floor(Math.random() * documents.length);
+  const randomIndex = Math.round(Math.random() * documents.length);
   const id = documents[randomIndex].id;
 
   const character: {name?: string, fullname?: string} = {name: 'empty', fullname: 'Henkie'};
@@ -329,7 +381,7 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   }
 
   const documents = await admin.firestore().collection('characters').listDocuments();
-  const randomIndex = Math.floor(Math.random() * documents.length);
+  const randomIndex = Math.round(Math.random() * documents.length);
   const id = documents[randomIndex].id;
 
   const character: Character = {
@@ -370,7 +422,7 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
 
   await admin.database().ref(`/users/${context.auth.uid}/character`).set(character);
 
-  await loadMessage(context.auth.uid);
+  await loadMessage(context.auth.uid, character.type);
 
   return true;
 });

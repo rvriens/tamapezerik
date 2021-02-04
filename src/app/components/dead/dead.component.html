@@ -1,4 +1,7 @@
 <p>
-  Wat jammer. Hij doet het niet meer.
+  Wat jammer. '{{alias}}' doet het niet meer.
 </p>
-<ion-button color="primary" (click)="playAgain($event)">Probeer opnieuw</ion-button>
+<ion-button color="pz" (click)="playAgain($event)" [disabled]="confirmLoading">Probeer opnieuw</ion-button>
+<div class="character-container">
+  <ion-img  [src]="imgurl"></ion-img>
+</div>

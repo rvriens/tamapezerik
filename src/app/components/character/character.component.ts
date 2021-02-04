@@ -41,8 +41,6 @@ export class CharacterComponent implements OnInit {
   constructor(
     private characterService: CharacterService,
     private fireStorage: AngularFireStorage,
-    private fireMessaging: AngularFireMessaging,
-    private fireStore: AngularFirestore,
     private auth: AuthService,
     private eggService: EggService,
     private detector: ChangeDetectorRef,

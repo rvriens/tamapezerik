@@ -25,5 +25,5 @@
     <ion-label position="stacked">Naam</ion-label>
     <ion-input formControlName="alias"></ion-input>
   </ion-item>
-  <ion-button type="submit">verder</ion-button>
+  <ion-button type="submit" [disabled]="confirmOpeningLoading">verder</ion-button>
 </form>

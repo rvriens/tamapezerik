@@ -1,0 +1,10 @@
+.character-container {
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    z-index: -1;
+}
+
+.character-container ion-img {
+    filter:opacity(50%) blur(2px);
+}

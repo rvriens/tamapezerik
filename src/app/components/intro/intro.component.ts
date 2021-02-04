@@ -15,6 +15,7 @@ export class IntroComponent implements OnInit {
   public fullname: string;
   public tipText: string;
   public closeOpeningForm: FormGroup;
+  public confirmOpeningLoading = false;
 
   slideOpts = {
     initialSlide: 0,
@@ -54,6 +55,7 @@ export class IntroComponent implements OnInit {
 
   closeOpening(ev: Event) {
     if (this.closeOpeningForm.valid) {
+      this.confirmOpeningLoading = true;
       this.eggService.closeOpening(this.closeOpeningForm.value.alias);
     }
   }

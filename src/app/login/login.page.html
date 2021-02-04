@@ -1,10 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button color="pz"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button [routerLink]="['/home']" color="primary">
+      <ion-button color="pz"  [routerLink]="['/home']">
         <ion-icon slot="icon-only" md="home"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -47,7 +47,7 @@
           <ion-icon name="logo-facebook" slot="end"></ion-icon>
         </ion-button>
         -->
-        <ion-button [routerLink]="['phone']">Telefoon
+        <ion-button color="pz" [routerLink]="['phone']">Telefoon
           <ion-icon name="call-outline" slot="end"></ion-icon>
         </ion-button>
         <!--
@@ -77,7 +77,7 @@
         <ion-card-content>
           
           <ion-input #phonenr type="tel" placeholder="Telefoonnummer"></ion-input>
-          <ion-button (click)="enterTel(phonenr.value)">Login</ion-button>
+          <ion-button color="pz" (click)="enterTel(phonenr.value)">Login</ion-button>
           
         </ion-card-content>
       </ion-card>

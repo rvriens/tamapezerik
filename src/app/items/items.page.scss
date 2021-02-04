@@ -1,3 +1,10 @@
+ion-toolbar {
+    --color: var(--pz-color1)
+}
+.item-container {
+    display: flex;
+    flex-flow: wrap;
+}
 .item-btn {
-    --background: var(--pz-color1);
+    flex: 1;
 }

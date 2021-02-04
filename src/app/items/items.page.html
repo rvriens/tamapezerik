@@ -2,21 +2,23 @@
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
+        <ion-icon color="pz" slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title class="ion-text-center">Items</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-<ng-container *ngFor="let item of items | async">
 
+<div class="item-container">
+  <ng-container *ngFor="let item of items | async">
 
-  <ion-button [disabled]="isGiving" class="item-btn" (click)="give(item.id)">{{item.name}}</ion-button>
+  <ion-button color="pz" [disabled]="isGiving" class="item-btn" (click)="give(item.id)">{{item.name}}</ion-button>
   <!--
     <ion-icon name="beer-outline"></ion-icon>
   -->
   
 </ng-container>
+</div>
 
 </ion-content>
