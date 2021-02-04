@@ -524,7 +524,7 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
       maxperhour = itemNameData.maxperhour;
     }
 
-    if (maxperday === 0) {
+    if (maxperday === 0 || !mutstats) {
       return {success: false, message: 'Dat is toch helemaal niks voor mij!'}
     }
 
