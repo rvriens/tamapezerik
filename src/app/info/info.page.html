@@ -31,11 +31,13 @@
 <p>
   Gebruik je telefoonnummer om op verschillende apparaten je TamaPezerik te verzorgen. 
 </p>
-<p showWhen="android">
+<p *ngIf="platform.is('android')">
+  <b>Android</b><br>
   Voeg je TamaPezerik toe aan je startscherm!<br>
   Via menu (rechtsboven) en dan 'toevoegen aan startscherm'
 </p>
-<p showWhen="ios">
+<p *ngIf="platform.is('ios')">
+  <b>iPhone/iPad</b><br>
   Voeg je TamaPezerik toe aan je startscherm!<br>
   Onderaan in het scherm middelste knop, en dan toevoegen aan startscherm.
 </p>

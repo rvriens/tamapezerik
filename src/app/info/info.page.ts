@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-info',
@@ -8,7 +8,8 @@ import { NavController } from '@ionic/angular';
 })
 export class InfoPage implements OnInit {
 
-  constructor(private navCtrl: NavController) { }
+  constructor(private navCtrl: NavController,
+              public platform: Platform) { }
 
   ngOnInit() {
   }
