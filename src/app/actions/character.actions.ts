@@ -10,3 +10,7 @@ export const randomMessage = createAction('[character] random message');
 export const loadCharacter = createAction('[character] load character');
 export const updateCharacter = createAction('[character] update character', props<Character>());
 export const failedCharacterLoading = createAction('[character] failed character loading');
+
+export const loadOwner = createAction('[character] load owner');
+export const updateOwner = createAction('[character] update owner', props<{name: string}>());
+export const failedOwnerLoading = createAction('[character] failed owner loading');

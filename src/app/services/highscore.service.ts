@@ -37,4 +37,21 @@ export class HighscoreService {
         }
       );
     }
+
+    async getOwnerNames(name: string): Promise<HighScore[]> {
+      const highscoreQuery =  await this.fs
+        .collection<HighScore>('highscore')
+        .ref
+        .where('originalname', '==', name)
+        .orderBy('lastupdated', 'desc');
+
+      const highscoreQuerySnapshot = await highscoreQuery.get();
+      return highscoreQuerySnapshot.docs.map(q =>
+      {
+        const highscore = q.data();
+        highscore.id = q.id;
+        return highscore;
+      }
+    );
+  }
 }

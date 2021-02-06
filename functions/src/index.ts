@@ -363,6 +363,27 @@ exports.eatEgg = functions.https.onCall(async (data, context) => {
   
 });
 
+async function getOwner(auth: {uid: string,  token: admin.auth.DecodedIdToken}): Promise<string | null> {
+
+  const phone =  auth.token.phone_number;
+  if (!phone) return null;
+  
+  const phonedoc = await admin.firestore().collection('phones').doc(phone).get();
+  if (!phonedoc.exists) return null;
+
+  
+
+  const name = phonedoc.data()?.name;
+
+  console.log('getOwner', phone, name);
+
+  if (name) {
+    await admin.database().ref(`/users/${auth.uid}/owner/name`).set(name);
+  }
+
+  return name
+}
+
 exports.openEgg = functions.https.onCall(async (data, context) => {
   //const key: string = data.key;
   //let answer: string = data.answer;
@@ -379,6 +400,8 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   if (x && x.status !== CharacterStatus.DeadConfirmed) {
       return false;
   }
+
+  await getOwner(context.auth)
 
   const documents = await admin.firestore().collection('characters').listDocuments();
   const randomIndex = Math.round(Math.random() * documents.length);
@@ -399,6 +422,7 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
         food: 50
     }
   };
+
   const characterdoc = await admin.firestore().collection('characters').doc(id).get();
   if (characterdoc.data()) {
     const characterData = characterdoc.data();
@@ -605,36 +629,46 @@ exports.killEgg = functions.https.onCall(async (data, context) => {
   return true;
 });
 
+exports.ownerMessage = functions.https.onCall(async (data, context) => {
 
-//   
-//   exports.openRoom = functions.https.onCall(async (data, context) => {
-//   
-//       const room = data.room;
-//       const key = data.key;
-//       const value = data.value;
-//       
-//       // Checking attribute.
-//     //   if (!(typeof text === 'string') || text.length === 0) {
-//     //   // Throwing an HttpsError so that the client gets the error details.
-//     //   throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-//     //       'one arguments "text" containing the message text to add.');
-//     // }
-//   
-//     // Checking that the user is authenticated.
-//     if (!context.auth) {
-//       // Throwing an HttpsError so that the client gets the error details.
-//       throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
-//           'while authenticated.');
-//     }
-//   
-//       const roomkeysnap = await admin.database().ref(`/rooms/${room}/key`).once('value');
-//       if (roomkeysnap.val() !== key)
-//           throw new functions.https.HttpsError('failed-precondition', 'key room not matching');
-//   
-//       const keysnap = await admin.database().ref(`/keys/${key}/value`).once('value');
-//       if (keysnap.val() !== value)
-//           throw new functions.https.HttpsError('not-found', 'Invalid key value');
-//       const obj: any = {};
-//       obj[room] = true;
-//       return admin.database().ref(`/open/${context.auth.uid}`).push(obj);
-//     });
+    // Checking that the user is authenticated.
+    if (!context.auth) {
+      // Throwing an HttpsError so that the client gets the error details.
+      throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+          'while authenticated.');
+    }
+
+    if (!(await admin.database().ref(`/users/${context.auth.uid}/owner`).once('value')).exists())
+      throw new functions.https.HttpsError('failed-precondition', 'No owner');
+
+    const userUid: string = data.uid; 
+    const message: string = data.message;
+    
+    await admin.database().ref(`/users/${userUid}/character/message`).set({text: message, type: 1});
+
+    return true;
+});
+
+exports.ownerPoints = functions.https.onCall(async (data, context) => {
+
+  // Checking that the user is authenticated.
+  if (!context.auth) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+        'while authenticated.');
+  }
+
+  if (!(await admin.database().ref(`/users/${context.auth.uid}/owner`).once('value')).exists())
+    throw new functions.https.HttpsError('failed-precondition', 'No owner');
+
+  const userUid: string = data.uid; 
+  const addpoints: number = data.points;
+
+  if (addpoints) {
+    let points = (await admin.database().ref(`/users/${userUid}/character/points`).once('value')).val();
+    points += addpoints;
+    await admin.database().ref(`/users/${userUid}/character/points`).set(points);
+  }
+
+  return true;
+});

@@ -2,6 +2,7 @@
     <!-- <ion-list-header>Gebruiker</ion-list-header> -->
     <ion-item button *ngIf="!(user | async).isPhone" (click)="phoneSignup()">Inloggen met telefoon</ion-item>
     <ion-item button *ngIf="(user | async).isPhone" (click)="logout()">Uitloggen</ion-item>
+    <ion-item button *ngIf="(owner | async)" (click)="openCharacters()">Verzorgers</ion-item>
     <ion-item button (click)="refresh()"><ion-label>Ververs</ion-label><ion-icon name="refresh-outline" slot="end"></ion-icon></ion-item>
     <ion-item button lines="none"  (click)="info()">Info</ion-item>
 </ion-list>

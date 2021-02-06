@@ -16,13 +16,15 @@ export interface State {
     };
   away: number;
   character: Character;
+  owner: string;
 }
 
 
 export const initialState: State = {
     message: null,
     away: 0,
-    character: null
+    character: null,
+    owner: null
   };
 
 
@@ -42,6 +44,10 @@ const characterReducer = createReducer(
         ({ ...state})),
     on(CharacterActions.updateCharacter, (state, character) =>
         ({ ...state, character})),
+    on(CharacterActions.loadOwner, (state) =>
+        ({ ...state, owner: null })),
+    on(CharacterActions.updateOwner, (state, owner) =>
+        ({ ...state, owner: owner.name })),
   );
 
 export function reducer(state: State | undefined, action: Action) {

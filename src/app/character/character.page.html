@@ -1,0 +1,108 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+			<ion-back-button color="pz"></ion-back-button>
+		</ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button color="pz" (click)="close()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Verzorgers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+
+<ng-container *ngIf="!userUid">
+
+  <ion-text color="pz">
+    <p>
+      <i>Iedereen met '{{owner}}'</i>
+    </p>
+  </ion-text>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6"><b>Naam</b></ion-col>
+      <ion-col size="3"><b>Punten</b></ion-col>
+      <ion-col size="3"></ion-col>
+      <!-- <ion-col>Uren</ion-col> -->
+    </ion-row>
+    <ion-row *ngFor="let highscore of highScores">
+      <ion-col size="6"><a [routerLink]="[highscore.userid]" >{{highscore.name}}</a></ion-col>
+      <ion-col size="3">{{highscore.points | number:'0.0-0'}}</ion-col>
+      <!-- <ion-col size="3"> <ion-button *ngIf="highscore.userid" [routerLink]="[highscore.userid]" size="small"> <ion-icon name="body"></ion-icon></ion-button></ion-col>-->
+      <!-- <ion-col>{{highscore.hours | number:'0.0-0'}}</ion-col> -->
+    </ion-row>
+
+  </ion-grid>
+</ng-container>
+
+<ng-container *ngIf="userUid">
+
+  <ng-container *ngIf="character">
+    <ion-grid>
+      <ion-row>
+        <ion-col>Naam</ion-col>
+        <ion-col>{{character.alias}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Punten</ion-col>
+        <ion-col>{{character.points | number:'0.0-0'}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Uur</ion-col>
+        <ion-col>{{character.hours | number:'0.0-0'}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Laatste wijziging</ion-col>
+        <ion-col>{{character.updated | date:'yyyy/MM/dd HH:mm:ss'}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Bericht</ion-col>
+        <ion-col>{{character?.message?.text}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Status</ion-col>
+        <ion-col><div *ngIf="character.status == 1">Levend</div>
+                 <div *ngIf="character.status == 2">Doet het niet</div></ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Gegevens</ion-col>
+        <ion-col>
+        <ion-progress-bar [color]="getColor(hydration)" [value]="hydration"></ion-progress-bar>
+      <ion-progress-bar [color]="getColor(food)" [value]="food"></ion-progress-bar>
+      <ion-progress-bar [color]="getColor(health)" [value]="health"></ion-progress-bar>
+      <ion-progress-bar [color]="getColor(love)" [value]="love"></ion-progress-bar>
+      
+      <ion-progress-bar [color]="getColor(pezerik)" [value]="pezerik"></ion-progress-bar>
+      
+    </ion-col>
+    </ion-row>
+    </ion-grid>
+    
+  </ng-container>
+
+  <ion-text >
+
+  </ion-text>
+    <form [formGroup]="messageForm" (ngSubmit)="sendMessage($event)">
+      <ion-item>
+        <ion-label position="stacked">Bericht</ion-label>
+        <ion-input formControlName="message"></ion-input>
+      </ion-item>
+      <ion-button color="pz" type="submit" [disabled]="sendingMessageLoading">Bericht verzenden</ion-button>
+    </form>
+    <ion-item-divider></ion-item-divider> 
+    <form [formGroup]="pointsForm" (ngSubmit)="sendPoints($event)">
+      <ion-item>
+        <ion-label position="stacked">Punten</ion-label>
+        <ion-input type="number" formControlName="points"></ion-input>
+      </ion-item>
+      <ion-button color="pz"  type="submit" [disabled]="sendingPointsLoading">Punten toekennen</ion-button>
+    </form>
+
+</ng-container>
+
+</ion-content>

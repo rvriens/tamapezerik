@@ -5,4 +5,5 @@ export class HighScore {
     public originalname?: string;
     public points?: number;
     public hours?: number;
+    public userid?: string;
 }

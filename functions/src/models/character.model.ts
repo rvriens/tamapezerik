@@ -15,4 +15,5 @@ export class Character {
     public alias?: string;
     public hours?: number;
     public unique?: string;
+    public message?: {text: string, type: number};
 }

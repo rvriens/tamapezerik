@@ -46,7 +46,28 @@ export class CharacterEffects {
       )
     )
   );
+
+  loadOwner$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(CharacterActions.loadOwner),
+    withLatestFrom(this.store.select(selectUserUid)),
+    mergeMap(([action, userUid]) => this.db.object<string>(`users/${userUid}/owner/name`).snapshotChanges()
+      .pipe(
+        filter(ssc => ssc.type === 'value' && !!ssc.key),
+        map(character => CharacterActions.updateOwner({name: character.payload.val()}) ),
+        catchError(() => of(CharacterActions.failedOwnerLoading()))
+      )
+    )
+  )
+);
+
   failedCharacters$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(CharacterActions.failedCharacterLoading),
+    tap(() => console.error('failed loading message'))
+  ), {dispatch: false});
+
+  failedOwner$ = createEffect(() =>
   this.actions$.pipe(
     ofType(CharacterActions.failedCharacterLoading),
     tap(() => console.error('failed loading message'))
