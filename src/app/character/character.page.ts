@@ -87,7 +87,7 @@ export class CharacterPage implements OnInit {
     this.highScores = await this.highScoreService.getOwnerNames(this.owner);
   }
 
-  async sendMessage() {
+  async sendMessage(event: any) {
     if (this.messageForm.valid) {
       const message = this.messageForm.value.message;
       this.sendingMessageLoading = true;
@@ -102,7 +102,7 @@ export class CharacterPage implements OnInit {
     }
   }
 
-  async sendPoints() {
+  async sendPoints(event: any) {
     if (this.pointsForm.valid) {
       const points = this.pointsForm.value.points;
       this.sendingPointsLoading = true;

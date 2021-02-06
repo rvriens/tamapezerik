@@ -116,15 +116,26 @@ export class CharacterComponent implements OnInit {
   }
 
   async loadItemUrl(url: string) {
-    this.itemout = false;
+    // this.itemout = false;
     this.itemUrl = url;
-    setTimeout(() => this.detector.detectChanges(), 10);
+    /*setTimeout(() => this.detector.detectChanges(), 10);
     await new Promise<void>(r => setTimeout(() => r(), 2500));
     this.itemout = true;
     setTimeout(() => this.detector.detectChanges(), 10);
     await new Promise<void>(r => setTimeout(() => r(), 2500));
     this.itemUrl = url;
+    setTimeout(() => this.detector.detectChanges(), 10);*/
+  }
+
+  async itemUrlLoaded(event) {
+    console.log('item loaded', event);
+    this.itemout = false;
     setTimeout(() => this.detector.detectChanges(), 10);
+    await new Promise<void>(r => setTimeout(() => r(), 2500));
+    this.itemout = true;
+    setTimeout(() => this.detector.detectChanges(), 10);
+    await new Promise<void>(r => setTimeout(() => r(), 2500));
+
   }
 
 

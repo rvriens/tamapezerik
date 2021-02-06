@@ -44,5 +44,5 @@
 </ion-fab>
 -->
 <div class="item-overlay" [class.out]="itemout" *ngIf="itemUrl">
-  <ion-img [src]="itemUrl"></ion-img>
+  <ion-img (ionImgDidLoad)="itemUrlLoaded($event)" [src]="itemUrl"></ion-img>
 </div>
