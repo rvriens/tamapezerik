@@ -1,10 +1,9 @@
-
-<ng-container *ngIf="!(eggLoading | async);else loading">
-    <app-egg *ngIf="(eggStatus | async) == EggStadia.New" (openEgg)="openEgg($event)"></app-egg>
-    <app-egg *ngIf="(eggStatus | async) == EggStadia.DeadConfirmed" (openEgg)="openEgg($event)"></app-egg>
-    <app-intro *ngIf="(eggStatus | async) == EggStadia.Opening"></app-intro>
-    <app-character *ngIf="(eggStatus | async) == EggStadia.Alive"></app-character>
-    <app-dead *ngIf="(eggStatus | async) == EggStadia.Dead" ></app-dead>
+<ng-container *ngIf="!eggLoading;else loading">
+    <app-egg *ngIf="eggStatus == EggStadia.New" (openEgg)="openEgg($event)"></app-egg>
+    <app-egg *ngIf="eggStatus == EggStadia.DeadConfirmed" (openEgg)="openEgg($event)"></app-egg>
+    <app-intro *ngIf="eggStatus == EggStadia.Opening"></app-intro>
+    <app-character *ngIf="eggStatus == EggStadia.Alive"></app-character>
+    <app-dead *ngIf="eggStatus == EggStadia.Dead" ></app-dead>
 </ng-container>
 <ng-template #loading>
 

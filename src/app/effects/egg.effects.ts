@@ -12,6 +12,7 @@ import { selectLoading } from '../selectors/app.selectors';
 import { selectUserUid } from '../selectors/app.selectors';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { stringify } from '@angular/compiler/src/util';
+import { selectEggAnimation } from '../selectors/egg.selectors';
 
 @Injectable()
 export class EggEffects {
@@ -33,6 +34,8 @@ export class EggEffects {
     openEgg$ = createEffect(() =>
       this.actions$.pipe(
       ofType(EggActions.openEgg),
+      // withLatestFrom(this.store.select(selectEggAnimation)),
+      // filter(([action, appEggAnimaltion]) => !appEggAnimaltion),
       tap((a) => this.eggService.openEgg()),
       delay(4000),
       map(() => EggActions.finishAnimation())

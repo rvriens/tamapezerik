@@ -76,9 +76,7 @@ export class AuthService {
                   { text: 'Annuleren', role: 'cancel'},
                   { text: 'Verzenden',
                     handler: async d => {
-
-                        const user = await confirmationResult.confirm(d.confirmationCode);
-                        window.location.reload();
+                        this.confirmPhoneCode(confirmationResult, d.confirmationCode);
                     }
                  }
                 ]});
@@ -94,7 +92,35 @@ export class AuthService {
 
      }
 
-     async emailSignin(email: string) {
+     async confirmPhoneCode(confirmationResult: auth.ConfirmationResult, code: string): Promise<void> {
+        try {
+            const user = await confirmationResult.confirm(code);
+            window.location.reload();
+        } catch (error) {
+            console.log('fout login', error);
+            if (error.code === 'auth/credential-already-in-use') {
+                const prompt2 = await this.alertCtrl.create({
+                    header: 'Nummer is al gekoppeld. Bestaande verwijderen?',
+                    buttons: [
+                    { text: 'Annuleren', role: 'cancel'},
+                    { text: 'Ja',
+                        handler: async f => {
+                        try {
+                            await this.afAuth.signInWithCredential(error.credential);
+                        } catch (error) {
+                            console.log('recover error', error);
+                        }
+                        window.location.reload();
+                        }
+                    }]
+                });
+                await prompt2.present();
+            }
+        }
+    }
+
+
+    async emailSignin(email: string) {
         const provider = new auth.GoogleAuthProvider();
         try {
             await this.afAuth.sendSignInLinkToEmail(email, {url: 'https://escaperoom75.web.app/login/email', handleCodeInApp: true});
@@ -107,7 +133,7 @@ export class AuthService {
         // return this.updateUserData(credential.user);
       }
 
-      async tryMailLinkLogin(url: string) {
+    async tryMailLinkLogin(url: string) {
           if (!await this.afAuth.isSignInWithEmailLink(url)) {
             return;
           }
@@ -135,7 +161,7 @@ export class AuthService {
           localStorage.removeItem('authemail');
       }
 
-     async googleSignin() {
+    async googleSignin() {
         const provider = new auth.GoogleAuthProvider();
         try {
             const user = await this.afAuth.signInWithPopup(provider);
@@ -147,7 +173,7 @@ export class AuthService {
         // return this.updateUserData(credential.user);
       }
 
-      async facebookSignin() {
+    async facebookSignin() {
         const provider = new auth.FacebookAuthProvider();
         try {
             const user = await this.afAuth.signInWithPopup(provider);
@@ -159,7 +185,7 @@ export class AuthService {
         // return this.updateUserData(credential.user);
       }
 
-      async anonymouslySignin() {
+    async anonymouslySignin() {
           try {
             const user =  await this.afAuth.signInAnonymously();
           } catch (e) {

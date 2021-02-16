@@ -12,7 +12,7 @@ import { CharacterService } from '../services/character.service';
 import { HighscoreService } from '../services/highscore.service';
 
 @Component({
-  selector: 'app-character',
+  selector: 'app-character2',
   templateUrl: './character.page.html',
   styleUrls: ['./character.page.scss'],
 })

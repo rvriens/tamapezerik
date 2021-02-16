@@ -7,3 +7,4 @@ export const selectIsAnonymous = (state: AppState) => state.app?.user?.isAnonymo
 export const selectIsPhone = (state: AppState) => state.app?.user?.isPhone;
 
 export const selectLoading = (state: AppState) => state.app.loading;
+

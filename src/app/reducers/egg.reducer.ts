@@ -30,7 +30,9 @@ export const initialState: State = {
 const eggReducer = createReducer(
     initialState,
     on(EggActions.loadEggStatus, (state) =>
-        ({...state, loading: true})),
+        ({...state, loading: state.eggAnimation ? false : true})),
+    on(EggActions.eggAnimation, (state) =>
+        ({...state, eggAnimation: true, afterAnimationStatus: null})),
     on(EggActions.openEgg, (state) =>
         ({...state, eggAnimation: true, afterAnimationStatus: null})),
     on(EggActions.finishAnimation, (state) =>

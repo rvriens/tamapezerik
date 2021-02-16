@@ -76,7 +76,16 @@
       
         <ion-card-content>
           
-          <ion-input #phonenr type="tel" placeholder="Telefoonnummer"></ion-input>
+          <ion-item>
+            <ion-input #phonenr type="tel" placeholder="Telefoonnummer"></ion-input>
+          </ion-item>
+          <!-- 
+            <ion-item [style.display]="authService.userIsLoggedIn ? 'none' : 'block'">
+            <ion-label color="pz" position="floating">Bestaande weggooien</ion-label>
+            <ion-checkbox #existing></ion-checkbox>
+          </ion-item>
+        -->
+          
           <ion-button color="pz" (click)="enterTel(phonenr.value)">Login</ion-button>
           
         </ion-card-content>

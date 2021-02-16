@@ -102,6 +102,7 @@ export class CharacterComponent implements OnInit {
   async showItemAnimation(item: string) {
     if (!this.itemurls[item]) {
     try {
+      this.thumburl = null;
       const ref = this.fireStorage.ref(`/items/${item}.gif`);
       this.itemurls[item] = (await ref.getDownloadURL().toPromise());
       } catch (e) {
@@ -117,7 +118,12 @@ export class CharacterComponent implements OnInit {
 
   async loadItemUrl(url: string) {
     // this.itemout = false;
+    if (url === this.itemUrl) {
+      this.animateItem();
+      return;
+    }
     this.itemUrl = url;
+
     /*setTimeout(() => this.detector.detectChanges(), 10);
     await new Promise<void>(r => setTimeout(() => r(), 2500));
     this.itemout = true;
@@ -129,13 +135,16 @@ export class CharacterComponent implements OnInit {
 
   async itemUrlLoaded(event) {
     console.log('item loaded', event);
+    await this.animateItem();
+  }
+
+  async animateItem(){
     this.itemout = false;
     setTimeout(() => this.detector.detectChanges(), 10);
     await new Promise<void>(r => setTimeout(() => r(), 2500));
     this.itemout = true;
     setTimeout(() => this.detector.detectChanges(), 10);
     await new Promise<void>(r => setTimeout(() => r(), 2500));
-
   }
 
 

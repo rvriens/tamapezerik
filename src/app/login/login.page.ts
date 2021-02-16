@@ -16,7 +16,7 @@ export class LoginPage implements OnInit {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private toastController: ToastController,
-              private authService: AuthService) { }
+              public authService: AuthService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -37,7 +37,6 @@ export class LoginPage implements OnInit {
       phonenr = '+316' + phonenr.toString().substring(2);
     }
     this.authService.loginMobile(phonenr.toString(), this.recaptchacontainer.nativeElement);
-
   }
 
   /*async enterEmail(email: string | number) {

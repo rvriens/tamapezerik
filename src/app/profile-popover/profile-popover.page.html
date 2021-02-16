@@ -2,7 +2,8 @@
     <!-- <ion-list-header>Gebruiker</ion-list-header> -->
     <ion-item button *ngIf="!(user | async).isPhone" (click)="phoneSignup()">Inloggen met telefoon</ion-item>
     <ion-item button *ngIf="(user | async).isPhone" (click)="logout()">Uitloggen</ion-item>
+    <ion-item button href="whatsapp://send?text=Zorg voor je eigen TamaPezerik tijdens carnaval. Geef hem drinken, eten en plezier! https://tamapezerik.web.app" data-action="share/whatsapp/share"><ion-label>Delen</ion-label><ion-icon name="logo-whatsapp" slot="end"></ion-icon></ion-item>
     <ion-item button *ngIf="(owner | async)" (click)="openCharacters()">Verzorgers</ion-item>
     <ion-item button (click)="refresh()"><ion-label>Ververs</ion-label><ion-icon name="refresh-outline" slot="end"></ion-icon></ion-item>
-    <ion-item button lines="none"  (click)="info()">Info</ion-item>
+    <ion-item button lines="none" (click)="info()">Info</ion-item>
 </ion-list>

@@ -3,11 +3,11 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { EggService } from '../../services/egg.service';
 import { Store } from '@ngrx/store';
-import { selectEggStatus, selectEggLoading } from '../../selectors/egg.selectors';
+import { selectEggStatus, selectEggLoading, selectEggAnimation } from '../../selectors/egg.selectors';
 import { EggStatus } from '../../reducers/egg.reducer';
 import * as EggActions from '../../actions/egg.actions';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tamagotchi',
@@ -16,9 +16,10 @@ import { tap } from 'rxjs/operators';
 })
 export class TamagotchiComponent implements OnInit {
 
-  public eggStatus: Observable<EggStatus>;
-  public eggLoading: Observable<boolean>;
+  public eggStatus: EggStatus = EggStatus.New;
+  public eggLoading = false;
   public EggStadia = EggStatus;
+  public eggAnimation = false;
 
   constructor(private store: Store,
               private authService: AuthService) {
@@ -26,28 +27,16 @@ export class TamagotchiComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.eggLoading = this.store.select(selectEggLoading);
-    this.eggStatus = this.store.select(selectEggStatus).pipe(tap(s => {
-      if (s === EggStatus.New &&
-        sessionStorage.getItem('eggopening') === 'true' &&
-        this.authService.isLoggedIn) {
-          sessionStorage.setItem('eggopening', 'false');
-          sessionStorage.removeItem('eggopening');
-          this.openEgg(null);
-          return;
-      }
-    }));
-
+    this.store.select(selectEggAnimation).subscribe(a => this.eggAnimation = a);
+    this.store.select(selectEggLoading).subscribe(l => this.eggLoading = l);
+    this.store.select(selectEggStatus).subscribe(s => this.eggStatus = s);
   }
 
   async openEgg(ev: Event) {
-    sessionStorage.setItem('eggopening', 'true');
+    this.store.dispatch(EggActions.eggAnimation());
     if (!this.authService.isLoggedIn) {
-      // this.router.navigate(['/login']);
-      // return;
       await this.authService.anonymouslySignin();
     }
-    // this.eggService.openEgg();
     this.store.dispatch(EggActions.openEgg());
   }
 }

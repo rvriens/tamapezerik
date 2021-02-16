@@ -8,16 +8,26 @@ import { AngularFireDatabase} from '@angular/fire/database';
 })
 export class EggService {
 
+  private isOpening = false;
+
   constructor(
     private db: AngularFireDatabase,
     private fns: AngularFireFunctions,
     private auth: AuthService) { }
 
   async openEgg(): Promise<void> {
-    const openEgg = this.fns.httpsCallable('openEgg');
-    const result = await openEgg({}).toPromise();
-    if (result) {
-      //
+    if (this.isOpening) { return; }
+    this.isOpening = true;
+    try {
+      const openEgg = this.fns.httpsCallable('openEgg');
+      const result = await openEgg({}).toPromise();
+      if (result) {
+        //
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      this.isOpening = false;
     }
   }
 

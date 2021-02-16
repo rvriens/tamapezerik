@@ -290,14 +290,14 @@ async function loadMessage(userUid: string, type: string | null = null, stats: {
 
   if (!messagecat) {
     const documents = await admin.firestore().collection('messages').listDocuments();
-    const randomIndex = Math.round(Math.random() * documents.length);
+    const randomIndex = Math.floor(Math.random() * documents.length);
     messagecat = documents[randomIndex].id;
   
   }
   console.log('messagecat', messagecat);
 
   const documentscat = await admin.firestore().collection(`messages/${messagecat}/messages`).listDocuments();
-  const randomIndexcat = Math.round(Math.random() * documentscat.length);
+  const randomIndexcat = Math.floor(Math.random() * documentscat.length);
   const id = documentscat[randomIndexcat].id;
   console.log('messageid', id);
 
@@ -346,7 +346,7 @@ exports.confirmDead = functions.https.onCall(async (data, context) => {
 exports.eatEgg = functions.https.onCall(async (data, context) => {
  
   const documents = await admin.firestore().collection('characters').listDocuments();
-  const randomIndex = Math.round(Math.random() * documents.length);
+  const randomIndex = Math.floor(Math.random() * documents.length);
   const id = documents[randomIndex].id;
 
   const character: {name?: string, fullname?: string} = {name: 'empty', fullname: 'Henkie'};
@@ -404,7 +404,7 @@ exports.openEgg = functions.https.onCall(async (data, context) => {
   await getOwner(context.auth)
 
   const documents = await admin.firestore().collection('characters').listDocuments();
-  const randomIndex = Math.round(Math.random() * documents.length);
+  const randomIndex = Math.floor(Math.random() * documents.length);
   const id = documents[randomIndex].id;
 
   const character: Character = {
