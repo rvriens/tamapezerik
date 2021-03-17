@@ -19,10 +19,29 @@ export const asyncForEach = async (dataSnapshot: admin.database.DataSnapshot, ch
     await Promise.all(toWait);
 };
 
-exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 5 minutes').onRun(async (context) => {
-
-  console.log('This will be run every 5 minutes!');
+exports.cronjobEndCharacters = functions.pubsub.schedule('every 1 hours').onRun(async (context) => {
+  console.log('This will be run every 1 hours!');
   
+  const activeCharacters = await admin.database().ref(`/users`).orderByChild("character/status").equalTo(1).once('value');
+  
+  await asyncForEach(activeCharacters, async action => {
+    const characterKey = action.key;
+    // const user: any = action.val();
+    if (characterKey !== null) {
+      await admin.database().ref(`/users/${characterKey}/character/mood`).set('sad');
+      const message = {text: 'Dees was carnaval 2021 "As dès kôs...!". Bedankt voor het verzorgen! Volgend jaar doen we het anders! "Psies in de prik...!"', type: 1};
+      await admin.database().ref(`/users/${characterKey}/character/message`).set(message);
+    }
+  });
+
+  return null;
+});
+
+exports.cronjobUpdateCharacters = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
+
+  console.log('This will be run every 24 hours!');
+  if (1 === 1)
+    return null;
   const activeCharacters = await admin.database().ref(`/users`).orderByChild("character/status").equalTo(1).once('value');
   
   await asyncForEach(activeCharacters, async action => {
@@ -463,6 +482,9 @@ exports.giveItem = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
         'while authenticated.');
   }
+
+  if (1 === 1 && item !== 'sing')
+    return {success: false, message: 'Carnaval is alweer voorbij! 😢'};
 
   const cs: CharacterStatus = (await admin.database().ref(`/users/${context.auth.uid}/character/status`).once('value')).val();
   if (cs !== CharacterStatus.Alive) {
